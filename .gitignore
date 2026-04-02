@@ -1,0 +1,9 @@
+node_modules
+dist
+dist-ssr
+*.local
+.env
+.env.*
+.DS_Store
+.gemini
+Nas_Chocolate_Sistem_Yedek_*.zip

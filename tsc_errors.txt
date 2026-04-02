@@ -1,0 +1,19 @@
+src/data/seedData.ts(65,35): error TS1002: Unterminated string literal.
+src/data/seedData.ts(66,1): error TS1005: ',' expected.
+src/data/seedData.ts(66,4): error TS1005: ',' expected.
+src/data/seedData.ts(66,10): error TS1005: ',' expected.
+src/data/seedData.ts(66,18): error TS1005: ',' expected.
+src/data/seedData.ts(66,20): error TS1002: Unterminated string literal.
+src/data/seedData.ts(67,3): error TS1005: ':' expected.
+src/data/seedData.ts(67,22): error TS1005: ',' expected.
+src/data/seedData.ts(67,107): error TS1005: ':' expected.
+src/data/seedData.ts(157,35): error TS1002: Unterminated string literal.
+src/data/seedData.ts(158,1): error TS1005: ',' expected.
+src/data/seedData.ts(158,4): error TS1005: ',' expected.
+src/data/seedData.ts(158,9): error TS1005: ',' expected.
+src/data/seedData.ts(158,16): error TS1005: ',' expected.
+src/data/seedData.ts(158,17): error TS1003: Identifier expected.
+src/data/seedData.ts(158,19): error TS1002: Unterminated string literal.
+src/data/seedData.ts(159,5): error TS1005: ':' expected.
+src/data/seedData.ts(159,17): error TS1005: ',' expected.
+src/data/seedData.ts(159,84): error TS1005: ':' expected.

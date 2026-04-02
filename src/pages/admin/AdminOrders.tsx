@@ -1,0 +1,544 @@
+import { useState } from 'react';
+import { Routes, Route, useNavigate, useParams } from 'react-router-dom';
+import { useApp } from '../../store/AppContext';
+import type { Order, OrderStatus } from '../../types';
+import { formatCurrency, calcDeposit } from '../../data/seedData';
+import { formatDate, formatDateShort, daysUntil, STATUS_LABELS, STATUS_COLORS, STATUS_PROGRESS, getInitials } from '../../utils/helpers';
+import { openWhatsApp, fillTemplate } from '../../utils/whatsapp';
+
+// ============================================================
+// ORDER LIST
+// ============================================================
+const ALL_STATUSES: OrderStatus[] = ['onay', 'kapora', 'hazirlaniyor', 'hazir', 'teslim'];
+
+function OrderList() {
+  const { state } = useApp();
+  const navigate = useNavigate();
+  const [filterStatus, setFilterStatus] = useState<OrderStatus | 'all'>('all');
+  const [search, setSearch] = useState('');
+
+  const filtered = state.orders.filter(o => {
+    const matchStatus = filterStatus === 'all' || o.status === filterStatus;
+    const q = search.toLowerCase();
+    const matchSearch = !q ||
+      o.bride.toLowerCase().includes(q) ||
+      o.groom.toLowerCase().includes(q) ||
+      o.phone.includes(q) ||
+      o.id.toLowerCase().includes(q);
+    return matchStatus && matchSearch;
+  }).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+  const counts = ALL_STATUSES.reduce((acc, s) => {
+    acc[s] = state.orders.filter(o => o.status === s).length;
+    return acc;
+  }, {} as Record<OrderStatus, number>);
+
+  return (
+    <div style={{ paddingBottom: 'var(--bottom-nav-h)' }}>
+      {/* Header */}
+      <div style={{ padding: 'var(--space-md)', paddingBottom: 0 }}>
+        <div className="flex items-center justify-between" style={{ marginBottom: 12 }}>
+          <h1 style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.03em' }}>Siparişler</h1>
+          <button className="btn btn-primary btn-sm" onClick={() => navigate('/siparis')}>+ Yeni</button>
+        </div>
+        <input
+          className="input-field"
+          placeholder="🔍 İsim, telefon veya sipariş kodu ara..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          style={{ marginBottom: 8 }}
+        />
+      </div>
+
+      {/* Status filter */}
+      <div className="filter-scroll">
+        <button
+          className={`filter-chip ${filterStatus === 'all' ? 'active' : ''}`}
+          onClick={() => setFilterStatus('all')}
+        >
+          Tümü
+          <span className="filter-chip__count">{state.orders.length}</span>
+        </button>
+        {ALL_STATUSES.map(s => (
+          <button
+            key={s}
+            className={`filter-chip ${filterStatus === s ? 'active' : ''}`}
+            onClick={() => setFilterStatus(s)}
+          >
+            {STATUS_LABELS[s]}
+            <span className="filter-chip__count">{counts[s]}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Order cards */}
+      <div style={{ padding: '0 var(--space-md)', display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
+        {filtered.length === 0 && (
+          <div style={{ textAlign: 'center', padding: 'var(--space-3xl)', color: 'var(--gray-400)' }}>
+            <div style={{ fontSize: 48, marginBottom: 12 }}>📭</div>
+            <div>Sipariş bulunamadı</div>
+          </div>
+        )}
+        {filtered.map(o => {
+          const days = daysUntil(o.deliveryDate);
+          const pct = STATUS_PROGRESS[o.status];
+          return (
+            <div key={o.id} className="order-card" onClick={() => navigate(`/admin/siparisler/${o.id}`)}>
+              <div className="order-card__avatar">{getInitials(o.bride, o.groom)}</div>
+              <div className="order-card__main">
+                <div className="order-card__names">{o.bride} & {o.groom}</div>
+                <div className="order-card__category">{o.categoryName || (o.selectedSet?.name ?? 'Özel Sipariş')}</div>
+                <div className="order-card__progress">
+                  <div className="order-card__bar">
+                    <div className="order-card__bar-fill" style={{ width: `${pct}%` }} />
+                  </div>
+                  <span className="order-card__status-label" style={{ color: STATUS_COLORS[o.status] }}>
+                    {STATUS_LABELS[o.status]}
+                  </span>
+                </div>
+              </div>
+              <div className="order-card__right">
+                <div className="order-card__date">{formatDateShort(o.deliveryDate)}</div>
+                <div className="order-card__days" style={{ color: days <= 2 ? 'var(--red-500)' : days <= 5 ? 'var(--orange-500)' : 'var(--gray-400)' }}>
+                  {days > 0 ? `${days} gün` : days === 0 ? 'Bugün' : 'Geçti'}
+                </div>
+                <div className="order-card__price">{formatCurrency(o.totalPrice)}</div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// ORDER DETAIL
+// ============================================================
+function OrderDetail() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { state, dispatch } = useApp();
+  const order = state.orders.find(o => o.id === id);
+  const [productionPhotos, setProductionPhotos] = useState<string[]>(order?.productionPhotos ?? []);
+  const [ibanDialogOpen, setIbanDialogOpen] = useState(false);
+  const [selectedIban, setSelectedIban] = useState<string | null>(null);
+
+  if (!order) return (
+    <div style={{ textAlign: 'center', padding: 'var(--space-3xl)' }}>
+      <div>Sipariş bulunamadı</div>
+      <button className="btn btn-primary" style={{ marginTop: 16 }} onClick={() => navigate('/admin/siparisler')}>
+        Geri Dön
+      </button>
+    </div>
+  );
+
+  const currentIdx = ['onay', 'kapora', 'hazirlaniyor', 'hazir', 'teslim'].indexOf(order.status);
+  const deposit = calcDeposit(order.totalPrice, state.settings.depositRate);
+  const ibans = state.settings.ibans;
+
+  const updateStatus = (s: OrderStatus) => {
+    dispatch({ type: 'UPDATE_ORDER', id: order.id, updates: { status: s, lastUpdated: new Date().toISOString() } });
+  };
+
+  const getTemplate = (id: string, extra?: Record<string, string>) => {
+    const tpl = state.settings.whatsappTemplates.find(t => t.id === id);
+    if (!tpl) return '';
+    const iban = ibans.find(i => i.id === selectedIban) ?? ibans[0];
+    return fillTemplate(tpl.body, {
+      gelin_adi: order.bride,
+      damat_adi: order.groom,
+      siparis_no: order.id,
+      toplam_tutar: formatCurrency(order.totalPrice).replace(' ₺', ''),
+      kapora_tutar: formatCurrency(deposit).replace(' ₺', ''),
+      teslim_tarihi: formatDate(order.deliveryDate),
+      banka_adi: iban?.bankName ?? '',
+      hesap_adi: iban?.holderName ?? '',
+      iban: iban?.iban ?? '',
+      takip_linki: `${state.settings.orderTrackingBaseUrl}?code=${order.id}&phone=${order.phone}`,
+      google_link: state.settings.googleReviewUrl,
+      ...extra,
+    });
+  };
+
+  const pleksiCount = [order.selectedBouquet ? 1 : 0, order.selectedBox ? 1 : 0, order.selectedSet ? 1 : 0].reduce((a, b) => a + b, 0);
+
+  const addPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    Promise.all(files.map(f => new Promise<string>(res => {
+      const r = new FileReader();
+      r.onload = () => res(r.result as string);
+      r.readAsDataURL(f);
+    }))).then(imgs => {
+      const updated = [...productionPhotos, ...imgs];
+      setProductionPhotos(updated);
+      dispatch({ type: 'UPDATE_ORDER', id: order.id, updates: { productionPhotos: updated } });
+    });
+  };
+
+  const STATUS_COLOR_MAP: Record<OrderStatus, string> = {
+    onay: 'var(--gray-400)',
+    kapora: 'var(--orange-500)',
+    hazirlaniyor: 'var(--blue-500)',
+    hazir: 'var(--green-500)',
+    teslim: '#8B5CF6',
+  };
+
+  return (
+    <div style={{ paddingBottom: 120 }}>
+      {/* Header */}
+      <div style={{
+        background: 'linear-gradient(135deg, var(--nas-bordeaux-3), var(--nas-bordeaux))',
+        padding: 'var(--space-lg)',
+      }}>
+        <button className="btn btn-sm" style={{ background: 'rgba(255,255,255,0.2)', color: '#fff', marginBottom: 12, border: 'none' }}
+          onClick={() => navigate('/admin/siparisler')}>
+          ← Siparişler
+        </button>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 style={{ fontSize: 22, fontWeight: 900, color: '#fff', letterSpacing: '-0.03em' }}>
+              {order.bride} & {order.groom}
+            </h1>
+            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)', marginTop: 4 }}>
+              #{order.id} · 📅 {formatDate(order.eventDate)} · 🚀 {formatDate(order.deliveryDate)}
+            </div>
+          </div>
+          <span style={{
+            padding: '6px 14px', borderRadius: 999, fontSize: 12, fontWeight: 700,
+            background: 'rgba(255,255,255,0.15)', color: '#fff', border: '1.5px solid rgba(255,255,255,0.3)',
+          }}>
+            {STATUS_LABELS[order.status]}
+          </span>
+        </div>
+      </div>
+
+      <div style={{ padding: 'var(--space-md)', display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+
+        {/* PROCESS TRACKER — Interactive */}
+        <div className="card" style={{ padding: 'var(--space-lg)' }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--gray-700)', marginBottom: 'var(--space-md)' }}>Sipariş Süreci</div>
+
+          <div className="order-tracker">
+            {/* 1. ONAY */}
+            <div className="tracker-item">
+              <div className="tracker-left">
+                <div className={`tracker-dot ${currentIdx > 0 ? 'done' : currentIdx === 0 ? 'active' : ''}`}>
+                  {currentIdx > 0 ? '✓' : '1'}
+                </div>
+                <div className={`tracker-line ${currentIdx > 0 ? 'done' : ''}`} />
+              </div>
+              <div className="tracker-content">
+                <div className={`tracker-title ${currentIdx === 0 ? 'active' : currentIdx > 0 ? 'done' : ''}`}>Onay Bekliyor</div>
+                {currentIdx === 0 && (
+                  <div style={{ marginTop: 10 }}>
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => {
+                        updateStatus('kapora');
+                        dispatch({ type: 'UPDATE_ORDER', id: order.id, updates: { customerNotifiedDeposit: true } });
+                      }}
+                    >
+                      ✅ Siparişi Onayla
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* 2. KAPORA */}
+            <div className="tracker-item">
+              <div className="tracker-left">
+                <div className={`tracker-dot ${currentIdx > 1 ? 'done' : currentIdx === 1 ? 'active' : ''}`}>
+                  {currentIdx > 1 ? '✓' : '2'}
+                </div>
+                <div className={`tracker-line ${currentIdx > 1 ? 'done' : ''}`} />
+              </div>
+              <div className="tracker-content">
+                <div className={`tracker-title ${currentIdx === 1 ? 'active' : currentIdx > 1 ? 'done' : ''}`}>
+                  {currentIdx > 1 ? 'Kapora Alındı' : 'Kapora'}
+                </div>
+                {currentIdx === 1 && (
+                  <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {/* Customer deposit notification */}
+                    {order.customerSentDeposit && (
+                      <div style={{ padding: '10px 14px', background: 'var(--orange-bg)', borderRadius: 'var(--radius-lg)', fontSize: 13, color: 'var(--orange-500)', fontWeight: 600 }}>
+                        🔔 Müşteri kaporayı gönderdi! Kontrol edin.
+                      </div>
+                    )}
+                    <button
+                      className="btn btn-green"
+                      onClick={() => {
+                        if (ibans.length > 1) setIbanDialogOpen(true);
+                        else {
+                          const iban = ibans[0];
+                          setSelectedIban(iban?.id ?? null);
+                          openWhatsApp(`90${order.phone}`, getTemplate('tpl_kapora'));
+                          dispatch({ type: 'UPDATE_ORDER', id: order.id, updates: { depositIban: iban?.id, customerNotifiedDeposit: true } });
+                        }
+                      }}
+                    >
+                      💬 Kapora İste (WhatsApp)
+                    </button>
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => openWhatsApp(`90${order.phone}`, '')}
+                    >
+                      📱 Kapora Kontrol Et
+                    </button>
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => updateStatus('hazirlaniyor')}
+                    >
+                      ✅ Kaporayı Onayla — Üretime Başlat
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* 3. HAZIRLANIYOR */}
+            <div className="tracker-item">
+              <div className="tracker-left">
+                <div className={`tracker-dot ${currentIdx > 2 ? 'done' : currentIdx === 2 ? 'active' : ''}`}>
+                  {currentIdx > 2 ? '✓' : '3'}
+                </div>
+                <div className={`tracker-line ${currentIdx > 2 ? 'done' : ''}`} />
+              </div>
+              <div className="tracker-content">
+                <div className={`tracker-title ${currentIdx === 2 ? 'active' : currentIdx > 2 ? 'done' : ''}`}>Hazırlanıyor</div>
+                {currentIdx === 2 && (
+                  <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {/* Pleksi module */}
+                    <div style={{ padding: 'var(--space-md)', background: 'var(--gray-50)', borderRadius: 'var(--radius-lg)' }}>
+                      <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 8 }}>🪪 Pleksi Siparişi</div>
+                      <div style={{ fontSize: 13, color: 'var(--gray-600)', marginBottom: 10, lineHeight: 1.5 }}>
+                        <strong>{order.bride} & {order.groom}</strong><br />
+                        {formatDate(order.eventDate)} · {pleksiCount} adet
+                      </div>
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        <button
+                          className="btn btn-primary btn-sm"
+                          style={{ flex: 1 }}
+                          onClick={() => {
+                            openWhatsApp(state.settings.pleksiWhatsapp,
+                              `Pleksi Siparişi\nGelin: ${order.bride}\nDamat: ${order.groom}\nTarih: ${formatDate(order.eventDate)}\nAdet: ${pleksiCount}`
+                            );
+                            dispatch({ type: 'UPDATE_ORDER', id: order.id, updates: { pleksiOrdered: true, pleksiOrderedAt: new Date().toISOString() } });
+                          }}
+                        >
+                          {order.pleksiOrdered ? '✓ Pleksi Sipariş Verildi' : '📤 Pleksi Siparişi Ver'}
+                        </button>
+                        <button
+                          className="btn btn-secondary btn-sm"
+                          onClick={() => openWhatsApp(state.settings.pleksiWhatsapp, '')}
+                        >
+                          Kontrol Et
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Production photos */}
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 6 }}>📷 Hazır Ürün Fotoğrafı Ekle</div>
+                      {productionPhotos.length > 0 && (
+                        <div className="upload-grid" style={{ marginBottom: 8 }}>
+                          {productionPhotos.map((img, i) => (
+                            <img key={i} src={img} alt="" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: 'var(--radius-md)' }} />
+                          ))}
+                        </div>
+                      )}
+                      <label>
+                        <input type="file" accept="image/*" multiple hidden onChange={addPhoto} />
+                        <span className="btn btn-outline" style={{ display: 'block', textAlign: 'center', fontSize: 13 }}>+ Fotoğraf Ekle</span>
+                      </label>
+                    </div>
+
+                    <button className="btn btn-primary" onClick={() => updateStatus('hazir')}>
+                      ✅ Hazırlandı — Siparişi Hazır Olarak İşaretle
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* 4. HAZIR */}
+            <div className="tracker-item">
+              <div className="tracker-left">
+                <div className={`tracker-dot ${currentIdx > 3 ? 'done' : currentIdx === 3 ? 'active' : ''}`}>
+                  {currentIdx > 3 ? '✓' : '4'}
+                </div>
+                <div className={`tracker-line ${currentIdx > 3 ? 'done' : ''}`} />
+              </div>
+              <div className="tracker-content">
+                <div className={`tracker-title ${currentIdx === 3 ? 'active' : currentIdx > 3 ? 'done' : ''}`}>Hazır</div>
+                {currentIdx === 3 && (
+                  <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <button
+                      className="btn btn-green"
+                      onClick={() => openWhatsApp(`90${order.phone}`, getTemplate('tpl_hazir'))}
+                    >
+                      💬 Müşteriye Bilgi Ver (WhatsApp)
+                    </button>
+                    <button className="btn btn-primary" onClick={() => updateStatus('teslim')}>
+                      🚀 Teslim Edildi
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* 5. TESLİM */}
+            <div className="tracker-item">
+              <div className="tracker-left">
+                <div className={`tracker-dot ${currentIdx === 4 ? 'done' : ''}`}>
+                  {currentIdx === 4 ? '✓' : '5'}
+                </div>
+              </div>
+              <div className="tracker-content last">
+                <div className={`tracker-title ${currentIdx === 4 ? 'done' : ''}`}>
+                  {currentIdx === 4 ? '✅ Teslim Edildi!' : 'Teslim'}
+                </div>
+                {currentIdx === 4 && (
+                  <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <button
+                      className="btn btn-green btn-sm"
+                      onClick={() => openWhatsApp(`90${order.phone}`, getTemplate('tpl_teslim_fotografi'))}
+                    >
+                      📸 Program Fotoğrafı İste (WhatsApp)
+                    </button>
+                    <button
+                      className="btn btn-secondary btn-sm"
+                      onClick={() => openWhatsApp(`90${order.phone}`, getTemplate('tpl_google'))}
+                    >
+                      ⭐ Google Yorumu İste
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ATÖLYE SECTION */}
+        <div className="card" style={{ padding: 'var(--space-lg)' }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--gray-700)', marginBottom: 'var(--space-md)' }}>🏭 Atölye</div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-md)' }}>
+            {/* Buket / Set */}
+            <div
+              style={{ borderRadius: 'var(--radius-xl)', overflow: 'hidden', border: '1.5px solid var(--gray-100)', cursor: 'pointer' }}
+            >
+              <img
+                src={order.selectedBouquet?.imageUrl ?? order.selectedSet?.imageUrl ?? ''}
+                alt="Buket"
+                style={{ width: '100%', aspectRatio: '1', objectFit: 'cover' }}
+              />
+              <div style={{ padding: 10 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--nas-bordeaux)' }}>💐 Buket/Set</div>
+                <div style={{ fontSize: 12, color: 'var(--gray-600)', marginTop: 2 }}>
+                  {order.selectedBouquet?.name ?? order.selectedSet?.name ?? 'Seçilmedi'}
+                </div>
+                {order.roseCount > 0 && (
+                  <div style={{ fontSize: 11, color: 'var(--gray-400)', marginTop: 2 }}>🌹 Anne Gülü: {order.roseCount}</div>
+                )}
+              </div>
+            </div>
+
+            {/* Sandık */}
+            <div
+              style={{ borderRadius: 'var(--radius-xl)', overflow: 'hidden', border: '1.5px solid var(--gray-100)', cursor: 'pointer' }}
+            >
+              <img
+                src={order.selectedBox?.imageUrl ?? 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect fill="%23f3f4f6" width="200" height="200"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%239CA3AF" font-size="14">Sandık Yok</text></svg>'}
+                alt="Sandık"
+                style={{ width: '100%', aspectRatio: '1', objectFit: 'cover' }}
+              />
+              <div style={{ padding: 10 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--nas-bordeaux)' }}>📦 Sandık</div>
+                <div style={{ fontSize: 12, color: 'var(--gray-600)', marginTop: 2 }}>
+                  {order.selectedBox?.name ?? 'Seçilmedi'}
+                </div>
+                {order.selectedLabel && (
+                  <div style={{ fontSize: 11, color: 'var(--gray-400)', marginTop: 2 }}>🏷️ {order.selectedLabel.name}</div>
+                )}
+                {order.chocolateCount > 0 && (
+                  <div style={{ fontSize: 11, color: 'var(--gray-400)', marginTop: 2 }}>🍫 +{order.chocolateCount} çikolata</div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ORDER DETAILS */}
+        <div className="card" style={{ padding: 'var(--space-lg)' }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--gray-700)', marginBottom: 'var(--space-md)' }}>Sipariş Detayları</div>
+          <div className="summary-section" style={{ margin: 0 }}>
+            {[
+              ['Sipariş No', order.id],
+              ['Telefon', `+90 ${order.phone}`],
+              ['Set', order.selectedSet?.name ?? (order.selectedBouquet?.name ?? 'Kendin Oluştur')],
+              ['Program Tarihi', formatDate(order.eventDate)],
+              ['Teslim Tarihi', formatDate(order.deliveryDate)],
+            ].map(([k, v]) => (
+              <div key={k} className="summary-row">
+                <span className="summary-row__label">{k}</span>
+                <span className="summary-row__value">{v}</span>
+              </div>
+            ))}
+          </div>
+          <div className="summary-total" style={{ marginTop: 12 }}>
+            <span className="summary-total__label">Toplam / Kapora</span>
+            <div>
+              <div className="summary-total__amount">{formatCurrency(order.totalPrice)}</div>
+              <div style={{ fontSize: 12, opacity: 0.75 }}>Kapora: {formatCurrency(deposit)}</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      {/* IBAN Select Dialog */}
+      {ibanDialogOpen && (
+        <div className="modal-overlay center animate-fade-in" onClick={() => setIbanDialogOpen(false)}>
+          <div className="modal-dialog animate-scale-in" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <span className="modal-title">IBAN Seçin</span>
+              <button className="btn btn-icon btn-secondary" onClick={() => setIbanDialogOpen(false)}>✕</button>
+            </div>
+            <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {ibans.map(iban => (
+                <button
+                  key={iban.id}
+                  className={`btn ${selectedIban === iban.id ? 'btn-primary' : 'btn-secondary'}`}
+                  style={{ textAlign: 'left', justifyContent: 'flex-start', flexDirection: 'column', alignItems: 'flex-start', padding: 14 }}
+                  onClick={() => {
+                    setSelectedIban(iban.id);
+                    openWhatsApp(`90${order.phone}`, getTemplate('tpl_kapora'));
+                    dispatch({ type: 'UPDATE_ORDER', id: order.id, updates: { depositIban: iban.id, customerNotifiedDeposit: true } });
+                    setIbanDialogOpen(false);
+                  }}
+                >
+                  <div style={{ fontWeight: 700 }}>{iban.bankName}</div>
+                  <div style={{ fontSize: 12, opacity: 0.8 }}>{iban.holderName}</div>
+                  <div style={{ fontSize: 11, opacity: 0.65, letterSpacing: '0.04em' }}>{iban.iban}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================
+// ROUTES
+// ============================================================
+export default function AdminOrders() {
+  return (
+    <Routes>
+      <Route path="/" element={<OrderList />} />
+      <Route path="/:id" element={<OrderDetail />} />
+    </Routes>
+  );
+}
