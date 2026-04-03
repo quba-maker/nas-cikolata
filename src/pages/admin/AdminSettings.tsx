@@ -64,8 +64,8 @@ export default function AdminSettings() {
       )}
 
       {/* General settings */}
-      <div className="glass-block" style={{ padding: 'var(--space-md)', background: '#fff' }}>
-        <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 'var(--space-md)' }}>⚙️ Genel Ayarlar</div>
+      <div className="dashboard-panel-card" style={{ padding: 'var(--space-md)', background: '#fff' }}>
+        <div className="dashboard-inner-header" style={{ marginBottom: 'var(--space-md)' }}>GENEL AYARLAR</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {[
             { label: 'Firma Adı', key: 'firmName' },
@@ -102,8 +102,8 @@ export default function AdminSettings() {
       </div>
 
       {/* Product Tags */}
-      <div className="glass-block" style={{ padding: 'var(--space-md)', background: '#fff' }}>
-        <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 'var(--space-md)' }}>🏷️ Ürün Etiketleri (Renk vb.)</div>
+      <div className="dashboard-panel-card" style={{ padding: 'var(--space-md)', background: '#fff' }}>
+        <div className="dashboard-inner-header" style={{ marginBottom: 'var(--space-md)' }}>ÜRÜN ETİKETLERİ (RENK VB.)</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {((local.productTags?.length ? local.productTags : null) || ['Karışık', 'Beyaz', 'Gümüş', 'Gold', 'Pembe', 'Mavi', 'Sarı', 'Mor', 'Siyah', 'Kırmızı']).map(tag => (
@@ -162,8 +162,8 @@ export default function AdminSettings() {
       </div>
 
       {/* Product Badges */}
-      <div className="glass-block" style={{ padding: 'var(--space-md)', background: '#fff' }}>
-        <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 'var(--space-md)' }}>🎀 Ürün Rozetleri (Sol Üst Köşe Yazısı)</div>
+      <div className="dashboard-panel-card" style={{ padding: 'var(--space-md)', background: '#fff' }}>
+        <div className="dashboard-inner-header" style={{ marginBottom: 'var(--space-md)' }}>ÜRÜN ROZETLERİ (SOL ÜST KÖŞE)</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {((local.productBadges?.length ? local.productBadges : null) || ['İndirim', 'Çok Satılan', 'Çok Tercih Edilen', 'Yeni']).map(badge => (
@@ -222,8 +222,8 @@ export default function AdminSettings() {
       </div>
 
       {/* Custom Order Category Forms */}
-      <div className="glass-block" style={{ padding: 'var(--space-md)', marginBottom: 'var(--space-md)', background: '#fff' }}>
-        <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 'var(--space-md)' }}>🖼️ Kendin Oluştur Kategorileri</div>
+      <div className="dashboard-panel-card" style={{ padding: 'var(--space-md)', marginBottom: 'var(--space-md)', background: '#fff' }}>
+        <div className="dashboard-inner-header" style={{ marginBottom: 'var(--space-md)' }}>KENDİN OLUŞTUR KATEGORİSİ GÖRSELLERİ</div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           {[
             { key: 'customOrderBouquetImg', label: 'Buket Aranjmanlar', desc: 'İlk adımdaki Buket buton resmi' },
@@ -256,8 +256,8 @@ export default function AdminSettings() {
       </div>
 
       {/* Partners */}
-      <div className="glass-block" style={{ padding: 'var(--space-md)', background: '#fff' }}>
-        <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 'var(--space-md)' }}>👥 Ortaklar</div>
+      <div className="dashboard-panel-card" style={{ padding: 'var(--space-md)', background: '#fff' }}>
+        <div className="dashboard-inner-header" style={{ marginBottom: 'var(--space-md)' }}>ORTAKLAR</div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           {[
             { key: 'partner1Name', shareKey: 'partner1Share', label: 'Ortak 1 (Kasa)' },
@@ -281,9 +281,9 @@ export default function AdminSettings() {
       </div>
 
       {/* IBANs */}
-      <div className="glass-block" style={{ padding: 'var(--space-md)', background: '#fff' }}>
+      <div className="dashboard-panel-card" style={{ padding: 'var(--space-md)', background: '#fff' }}>
         <div className="flex items-center justify-between" style={{ marginBottom: 'var(--space-md)' }}>
-          <div style={{ fontSize: 15, fontWeight: 800 }}>💳 IBAN Listesi</div>
+          <div className="dashboard-inner-header">IBAN LİSTESİ</div>
           <button className="btn btn-primary btn-sm" onClick={addIban}>+ Ekle</button>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -338,8 +338,8 @@ export default function AdminSettings() {
       </div>
 
       {/* WhatsApp Templates */}
-      <div className="glass-block" style={{ padding: 'var(--space-md)', background: '#fff' }}>
-        <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 'var(--space-md)' }}>💬 WhatsApp Şablonları</div>
+      <div className="dashboard-panel-card" style={{ padding: 'var(--space-md)', background: '#fff' }}>
+        <div className="dashboard-inner-header" style={{ marginBottom: 'var(--space-md)' }}>WHATSAPP ŞABLONLARI</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {local.whatsappTemplates.map(tpl => (
             <div key={tpl.id} style={{ padding: 'var(--space-md)', background: 'var(--gray-50)', borderRadius: 'var(--radius-lg)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
