@@ -26,7 +26,12 @@ export default function ProductDetailModal({ product, onClose, onSelect, onConfi
 
   const categoryName = state?.categories?.find(c => c.id === product.categoryId)?.name || 'Özel Üretim Kombinasyon';
 
-  const images = product.gallery?.length > 0 ? product.gallery : [product.imageUrl];
+  // Güvenli galeri kontrolü (Eski önbellekten bozuk array gelebilir)
+  const validGallery = product.gallery?.filter(g => typeof g === 'string' && g.trim().length > 5) || [];
+  const baseImg = product.imageUrl && typeof product.imageUrl === 'string' && product.imageUrl.trim().length > 5 ? product.imageUrl : 'https://images.unsplash.com/photo-1549488344-1f9b8d2bd1f3?w=600&h=800&q=80&fit=crop';
+  
+  // Sorunsuz çalışan Ana Görsel'i GARANTİ olarak daima 1. sıraya (Kapak) koyuyoruz!
+  const images = Array.from(new Set([baseImg, ...validGallery]));
 
   const next = useCallback(() => setCurrent(c => (c + 1) % images.length), [images.length]);
   const prev = useCallback(() => setCurrent(c => (c - 1 + images.length) % images.length), [images.length]);
@@ -85,7 +90,8 @@ export default function ProductDetailModal({ product, onClose, onSelect, onConfi
             {images.map((img, i) => (
               <img 
                 key={i} 
-                src={img || 'https://images.unsplash.com/photo-1549488344-1f9b8d2bd1f3?w=600&h=800&q=80&fit=crop'} 
+                src={img} 
+                onError={(e) => { e.currentTarget.src = baseImg; }}
                 alt="" 
                 style={{ width: '100%', height: '100%', objectFit: 'cover', flexShrink: 0, pointerEvents: 'none' }} 
               />

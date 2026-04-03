@@ -226,7 +226,7 @@ function CustomerInfoForm({ w, setW }: { w: WizardState; setW: React.Dispatch<Re
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 15, fontWeight: 800, color: '#991B1B', marginBottom: 4, letterSpacing: '-0.01em' }}>Acil Teslimat Gerektiriyor</div>
               <p style={{ fontSize: 14, color: '#B91C1C', lineHeight: 1.5, marginBottom: 16, fontWeight: 500 }}>Bu program için çalışma takvimimiz oldukça yoğun. Mümkün olan en hızlı çözüm için lütfen iletişime geçin.</p>
-              <a href={`https://wa.me/90${firmPhone}`} target="_blank" rel="noopener noreferrer" style={{
+              <a href={`https://wa.me/${firmPhone.replace(/\D/g, '').startsWith('90') ? firmPhone.replace(/\D/g, '') : '90'+firmPhone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" style={{
                 display: 'inline-flex', padding: '10px 20px', borderRadius: 999, background: '#25D366', color: '#FFF',
                 fontSize: 14, fontWeight: 800, textDecoration: 'none', alignItems: 'center', gap: 8,
                 boxShadow: '0 6px 16px rgba(37, 211, 102, 0.3)', transition: 'all 0.3s ease'
