@@ -52,8 +52,7 @@ function TrackingLogin({ onLogin, error }: { onLogin: (code: string, phone: stri
   }, []);
 
   return (
-    <div className="mobile-wrapper keynote-bg" style={{
-      minHeight: '100vh',
+    <div className="mobile-wrapper dashboard-bg" style={{
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
       padding: 'var(--space-xl)',
     }}>
@@ -214,52 +213,75 @@ function TrackerView({ order }: { order: Order }) {
   return (
     <div className="mobile-wrapper keynote-bg" style={{ minHeight: '100vh', position: 'relative' }}>
       
-      {/* KEYNOTE HEADER */}
+      {/* BRANDING HEADER */}
       <div style={{ padding: 'var(--space-2xl) var(--space-xl) 0', textAlign: 'center', position: 'relative', zIndex: 10 }}>
-        <div style={{ fontSize: 12, color: 'var(--nas-bordeaux)', letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 16, fontWeight: 800 }}>
-          Nas Özel Koleksiyon
+        <img 
+           src="https://nascikolata.com/wp-content/uploads/2025/01/nas-cikolata-logo-500.png" 
+           alt="Nas Çikolata" 
+           style={{ height: 64, margin: '0 auto 32px' }} 
+        />
+        
+        <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--nas-black)' }}>
+          Sipariş #{order.id}
         </div>
-        <h1 className="text-shimmer-gold" style={{ fontSize: 36, fontWeight: 900, letterSpacing: '-0.04em', lineHeight: 1.1, marginBottom: 12 }}>
-          Mükemmellik <br />Hazırlanıyor.
+        <h1 style={{ fontSize: 28, fontWeight: 900, color: 'var(--nas-bordeaux)', letterSpacing: '-0.02em', marginBottom: 16 }}>
+          Adım Adım İzleyin!
         </h1>
-        <p style={{ fontSize: 15, color: 'var(--gray-500)', maxWidth: 280, margin: '0 auto' }}>
-          <strong style={{ color: 'var(--nas-black)' }}>{order.bride} & {order.groom}</strong> için sipariş süreci
+        <p style={{ fontSize: 14, color: 'var(--gray-500)', maxWidth: 300, margin: '0 auto', lineHeight: 1.5 }}>
+          Değerli <strong style={{color: 'var(--nas-black)'}}>{order.bride} & {order.groom}</strong>, siparişiniz sisteme ulaştı. Hazırlık sürecinizi adım adım buradan canlı izleyebilirsiniz.
         </p>
-
-        <div style={{ marginTop: 24, display: 'inline-flex', gap: 16, background: '#FFF', borderRadius: 999, padding: '8px 16px', border: '1px solid rgba(0,0,0,0.05)', boxShadow: '0 8px 16px rgba(0,0,0,0.04)' }}>
-          <div style={{ fontSize: 12, color: 'var(--gray-600)' }}><span style={{ color: 'var(--nas-bordeaux)', marginRight: 4, fontWeight: 700 }}>Program</span>{formatDate(order.eventDate)}</div>
-          <div style={{ width: 1, background: 'rgba(0,0,0,0.1)' }} />
-          <div style={{ fontSize: 12, color: 'var(--gray-600)' }}><span style={{ color: 'var(--nas-bordeaux)', marginRight: 4, fontWeight: 700 }}>Teslim</span>{formatDate(order.deliveryDate)}</div>
-        </div>
       </div>
 
-      {/* HAUTE COUTURE PROGRESS TIMELINE */}
-      <div style={{ marginTop: 24, position: 'relative', zIndex: 10 }}>
-        <div className="couture-container">
+      {/* DASHBOARD PROGRESS TIMELINE */}
+      <div style={{ marginTop: 32, position: 'relative', zIndex: 10 }}>
+        <div className="dashboard-panel-card" style={{ padding: '24px 20px' }}>
           
-          {/* Dynamic liquid gold line connecting the steps */}
-          {/* Top is 60px padding, each step is approx 110px. Let's calculate height based on currentIdx */}
-          <div 
-            className="couture-progress-line" 
-            style={{ height: `${currentIdx * 128}px` }} 
-          />
-          
-          {/* STEP 1: Onay */}
-          <div className={`couture-item ${currentIdx === 0 ? 'active' : currentIdx > 0 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', block: 'center'})}>
-            <div className="couture-icon-wrapper">{currentIdx > 0 ? '✓' : '1'}</div>
-            <div className="couture-title">{currentIdx > 0 ? 'Onaylandı' : 'Onay Bekleniyor'}</div>
-            <div className="couture-desc">Sipariş alındı. Detaylar inceleniyor, kısa süre içerisinde işleme alınacak.</div>
+          <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--gray-400)', letterSpacing: '0.1em', marginBottom: 24, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--gray-400)' }}></div>
+            SİPARİŞ DURUMU
           </div>
 
-          {/* STEP 2: Kapora */}
-          <div className={`couture-item ${currentIdx === 1 ? 'active' : currentIdx > 1 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', block: 'center'})}>
-            <div className="couture-icon-wrapper">{currentIdx > 1 ? '✓' : '2'}</div>
-            <div className="couture-title">{currentIdx > 1 ? 'Kapora Alındı' : currentIdx === 1 ? 'Ödeme Bekleniyor' : 'Kapora'}</div>
-            <div className="couture-desc">
-              {currentIdx > 1 
-                ? 'Ödemeniz başarıyla tarafımıza ulaştı.'
-                : 'Siparişin üretime girmesi için kapora işleminin tamamlanması gerekmektedir.'}
+          <div className="dashboard-timeline">
+            
+            {/* STEP 1: Onay */}
+            <div className={`dashboard-item ${currentIdx === 0 ? 'active' : currentIdx > 0 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', block: 'center'})}>
+              <div className="dashboard-icon">{currentIdx > 0 ? '✓' : '1'}</div>
+              <div className="dashboard-item-title">{currentIdx > 0 ? 'Sipariş Onaylandı' : 'Sipariş Onay Bekliyor'}</div>
+              <div className="dashboard-item-desc">
+                {currentIdx > 0 ? 'Siparişiniz incelendi ve üretime onay verildi.' : 'Sipariş alındı. Detaylar inceleniyor, kısa süre içerisinde işleme alınacak.'}
+              </div>
             </div>
+
+            {/* STEP 2: Kapora */}
+            <div className={`dashboard-item ${currentIdx === 1 ? 'active' : currentIdx > 1 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', block: 'center'})}>
+              <div className="dashboard-icon">{currentIdx > 1 ? '✓' : '2'}</div>
+              <div className="dashboard-item-title">{currentIdx > 1 ? 'Kapora Onaylandı' : currentIdx === 1 ? 'Ödeme Bekleniyor' : 'Kapora'}</div>
+              <div className="dashboard-item-desc">
+                {currentIdx > 1 
+                  ? 'Ödemeniz başarıyla sistemimize yansıdı.'
+                  : 'Siparişin üretime girmesi için kapora işleminin tamamlanması gerekmektedir.'}
+              </div>
+              
+              {currentIdx >= 1 && (
+                <div className="dashboard-inner-card">
+                  <div className="dashboard-inner-header">
+                    <span>🕒</span> SİPARİŞ ÜCRET ÖZETİ
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: 'var(--gray-500)', marginBottom: 8, fontWeight: 500 }}>
+                    <span>Toplam Ücret</span>
+                    <span style={{ color: 'var(--nas-black)', fontWeight: 700 }}>{formatCurrency(order.totalPrice)}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: 'var(--gray-500)', marginBottom: 16, fontWeight: 500 }}>
+                    <span>Ödenen Kapora</span>
+                    <span style={{ color: 'var(--nas-black)', fontWeight: 700 }}>{formatCurrency(deposit)}</span>
+                  </div>
+                  <div style={{ height: 1, background: '#E5E7EB', margin: '0 -16px 16px', } /* separator */} />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, fontWeight: 700 }}>
+                    <span style={{ color: 'var(--nas-black)' }}>Teslimatta Ödenecek</span>
+                    <span style={{ color: 'var(--nas-bordeaux)' }}>{formatCurrency(order.totalPrice - deposit)}</span>
+                  </div>
+                </div>
+              )}
             {currentIdx === 1 && !customerSent && iban && (
               <div style={{ marginTop: 24, padding: '16px', background: 'var(--gray-50)', borderRadius: 24, border: '1px solid rgba(0,0,0,0.05)' }}>
                 <div style={{ fontSize: 11, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>Ödeme Bilgileri</div>
@@ -287,56 +309,71 @@ function TrackerView({ order }: { order: Order }) {
           </div>
 
           {/* STEP 3: Hazırlanıyor */}
-          <div className={`couture-item ${currentIdx === 2 ? 'active' : currentIdx > 2 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', block: 'center'})}>
-            <div className="couture-icon-wrapper">{currentIdx > 2 ? '✓' : '3'}</div>
-            <div className="couture-title">{currentIdx > 2 ? 'Hazırlandı' : 'Tasarım Sürecinde'}</div>
-            <div className="couture-desc">
-              Siparişiniz atölyemizde özenle hayat buluyor.
-              {currentIdx === 2 && (
-                <div style={{ marginTop: 16 }}>
-                  <PrepProgressBar eventDate={order.eventDate} />
-                </div>
-              )}
+          <div className={`dashboard-item ${currentIdx === 2 ? 'active' : currentIdx > 2 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', block: 'center'})}>
+            <div className="dashboard-icon">{currentIdx > 2 ? '✓' : '3'}</div>
+            <div className="dashboard-item-title">{currentIdx > 2 ? 'Üretimde' : currentIdx === 2 ? 'Üretime Başlandı' : 'Üretim'}</div>
+            <div className="dashboard-item-desc">
+              Çikolata ve çiçekleriniz sevgiyle hazırlanıyor. Çok yakında hazır olacak!
             </div>
+            {currentIdx === 2 && (
+              <div className="dashboard-inner-card" style={{ background: 'rgba(239, 68, 68, 0.05)', borderColor: 'rgba(239, 68, 68, 0.1)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <div className="dashboard-inner-header" style={{ color: 'var(--nas-bordeaux)', marginBottom: 0 }}>
+                    <span style={{ transform: 'rotate(-45deg)', display: 'inline-block' }}>⟳</span> USTA İŞÇİLİĞİ DEVAM EDİYOR
+                  </div>
+                  <div style={{ background: '#FFF', padding: '2px 8px', borderRadius: 4, fontSize: 11, fontWeight: 800, color: 'var(--nas-black)', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                    %10
+                  </div>
+                </div>
+                <div style={{ height: 6, background: '#FCA5A5', borderRadius: 999, overflow: 'hidden', marginBottom: 12 }}>
+                  <div style={{ height: '100%', width: '10%', background: 'var(--nas-bordeaux)', borderRadius: 999 }} />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 10, fontWeight: 600 }}>
+                  <span style={{ color: 'var(--gray-500)' }}>✨ Setinizi özenle hazırlıyoruz.</span>
+                  <span style={{ color: 'var(--nas-bordeaux)', background: 'rgba(239, 68, 68, 0.1)', padding: '4px 8px', borderRadius: 4 }}>
+                    Teslim Tarihiniz: {formatDate(order.deliveryDate).split(' ')[0]}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* STEP 4: Hazır (Gizemli Kutulu) */}
-          <div className={`couture-item ${currentIdx === 3 ? 'active' : currentIdx > 3 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', block: 'center'})}>
-            <div className="couture-icon-wrapper">{currentIdx > 3 ? '✓' : '4'}</div>
-            <div className="couture-title">{currentIdx > 3 ? 'Ayrıldı' : 'Teslime Hazır'}</div>
-            <div className="couture-desc">
-              Tüm hazırlıklar tamamlandı. Bu kusursuzluk sizi bekliyor.
-              {currentIdx === 3 && (
-                <div style={{ marginTop: 16 }}>
-                  <Confetti active />
-                  {order.productionPhotos.map((img, i) => (
-                    <KeynoteRevealPhoto key={i} src={img} />
-                  ))}
-                </div>
-              )}
+          <div className={`dashboard-item ${currentIdx === 3 ? 'active' : currentIdx > 3 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', block: 'center'})}>
+            <div className="dashboard-icon">{currentIdx > 3 ? '✓' : '4'}</div>
+            <div className="dashboard-item-title">{currentIdx > 3 ? 'Teslime Ayrıldı' : 'Sipariş Hazır'}</div>
+            <div className="dashboard-item-desc">
+              Tüm hazırlıklar tamamlandı. Siparişiniz teslime hazır bir şekilde bekliyor.
             </div>
+            {currentIdx === 3 && (
+              <div style={{ marginTop: 16 }}>
+                <Confetti active />
+                {order.productionPhotos.map((img, i) => (
+                  <KeynoteRevealPhoto key={i} src={img} />
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* STEP 5: Teslim (Bambaşka Son) */}
-          <div className={`couture-item ${currentIdx === 4 ? 'active' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', block: 'center'})}>
-            <div className="couture-icon-wrapper" style={{ borderColor: currentIdx === 4 ? '#22c55e' : '', color: currentIdx === 4 ? '#22c55e' : '' }}>5</div>
-            <div className="couture-title" style={{ color: currentIdx === 4 ? '#22c55e' : '' }}>Kusursuz Bir Son.</div>
-            <div className="couture-desc">Siparişiniz başarıyla teslim edildi. En güzel anılarınızda yer almak bizim için bir lükstü.</div>
-            
+          {/* STEP 5: Teslim */}
+          <div className={`dashboard-item ${currentIdx === 4 ? 'active' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', block: 'center'})}>
+            <div className="dashboard-icon">5</div>
+            <div className="dashboard-item-title">Teslim Edildi</div>
+            <div className="dashboard-item-desc">Siparişiniz başarıyla teslim edildi. Bizi tercih ettiğiniz için teşekkür ederiz.</div>
             {currentIdx === 4 && (
               <div style={{ marginTop: 32, cursor: 'default' }} onClick={e => e.stopPropagation()}>
                 {/* Yorumlar Apple Tarzı */}
-                <div style={{ background: '#FFF', borderRadius: 24, padding: 24, textAlign: 'center', border: '1px solid rgba(0,0,0,0.05)', marginBottom: 24, boxShadow: '0 8px 16px rgba(0,0,0,0.02)' }}>
+                <div className="dashboard-inner-card" style={{ textAlign: 'center' }}>
                   <div style={{ fontSize: 32, marginBottom: 12 }}>⭐️</div>
                   <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--nas-black)', marginBottom: 8 }}>Google Değerlendirmesi</div>
                   <div style={{ fontSize: 12, color: 'var(--gray-500)', marginBottom: 16 }}>Deneyimlerinizi paylaşarak bize güç verin.</div>
-                  <a href={state.settings.googleReviewUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', background: 'var(--gray-50)', color: '#4285F4', padding: '12px 24px', borderRadius: 999, fontWeight: 800, textDecoration: 'none', fontSize: 13, border: '1px solid rgba(66, 133, 244, 0.2)' }}>
+                  <a href={state.settings.googleReviewUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', background: 'var(--gray-100)', color: '#4285F4', padding: '12px 24px', borderRadius: 999, fontWeight: 800, textDecoration: 'none', fontSize: 13, border: '1px solid rgba(66, 133, 244, 0.2)' }}>
                     Değerlendirme Yap
                   </a>
                 </div>
 
-                {/* Fotoğraf Yükleme Apple Lansman Tarzı */}
-                <div style={{ background: 'linear-gradient(135deg, rgba(201,169,110,0.05), rgba(201,169,110,0.02))', borderRadius: 24, padding: 24, textAlign: 'center', border: '1px solid rgba(201,169,110,0.15)' }}>
+                {/* Fotoğraf Yükleme Formu */}
+                <div className="dashboard-inner-card" style={{ textAlign: 'center', marginTop: 16 }}>
                   <div style={{ fontSize: 32, marginBottom: 12 }}>📸</div>
                   <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--nas-bordeaux)', marginBottom: 8 }}>Anı Bekliyoruz</div>
                   <div style={{ fontSize: 12, color: 'var(--gray-500)', marginBottom: 16 }}>Söz/Nişan töreninizden profesyonel bir kare paylaşmak ister misiniz?</div>
@@ -349,7 +386,7 @@ function TrackerView({ order }: { order: Order }) {
                   )}
                   <label style={{ display: 'block' }}>
                     <input type="file" accept="image/*" multiple hidden onChange={addPhoto} />
-                    <span className="btn-luxury-shimmer" style={{ display: 'inline-block', padding: '12px 24px', borderRadius: 999, color: '#FFF', fontWeight: 800, fontSize: 13, cursor: 'pointer', border: 'none' }}>
+                    <span style={{ display: 'inline-block', background: 'var(--nas-bordeaux)', padding: '12px 24px', borderRadius: 999, color: '#FFF', fontWeight: 800, fontSize: 13, cursor: 'pointer' }}>
                       Fotoğraf Ekle
                     </span>
                   </label>
@@ -358,6 +395,7 @@ function TrackerView({ order }: { order: Order }) {
             )}
           </div>
 
+          </div>
         </div>
       </div>
       
