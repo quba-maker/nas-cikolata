@@ -8,6 +8,44 @@ import { openWhatsApp } from '../utils/whatsapp';
 import Confetti from '../components/Confetti';
 
 // ============================================================
+// MYSTERIOUS PHOTO REVEAL COMPONENT
+// ============================================================
+function BlurRevealPhoto({ src }: { src: string }) {
+  const [revealed, setRevealed] = useState(false);
+  const [isHolding, setIsHolding] = useState(false);
+  
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    if (isHolding && !revealed) {
+      timer = setTimeout(() => {
+        setRevealed(true);
+      }, 600); // 600ms hold to unlock
+    }
+    return () => clearTimeout(timer);
+  }, [isHolding, revealed]);
+
+  return (
+    <div 
+      className={`mysterious-photo-container ${revealed ? 'revealed' : ''}`}
+      onMouseDown={() => setIsHolding(true)}
+      onMouseUp={() => setIsHolding(false)}
+      onMouseLeave={() => setIsHolding(false)}
+      onTouchStart={() => setIsHolding(true)}
+      onTouchEnd={() => setIsHolding(false)}
+      style={{ marginBottom: 16 }}
+    >
+      <img src={src} className="real-img" alt="" />
+      
+      <div className="mysterious-glass">
+        <div className="mysterious-lock-icon">✨</div>
+        <div className="mysterious-text">Siparişinizden Bir Kare</div>
+        <div className="mysterious-subtext">Büyüyü Bozmak İçin Basılı Tut</div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
 // LOGIN SCREEN
 // ============================================================
 function TrackingLogin({ onLogin, error }: { onLogin: (code: string, phone: string) => void; error: string }) {
@@ -28,51 +66,68 @@ function TrackingLogin({ onLogin, error }: { onLogin: (code: string, phone: stri
   return (
     <div className="mobile-wrapper" style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, var(--nas-bordeaux-3) 0%, var(--nas-bordeaux) 60%, var(--nas-bordeaux-2) 100%)',
+      background: 'radial-gradient(ellipse at top, var(--nas-bordeaux-3) 0%, var(--nas-black) 100%)',
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
       padding: 'var(--space-xl)',
     }}>
-      <div style={{ textAlign: 'center', marginBottom: 40 }}>
-        <div style={{ fontSize: 56, marginBottom: 16 }}>🎀</div>
-        <h1 style={{ fontSize: 32, fontWeight: 900, color: '#fff', letterSpacing: '-0.04em', marginBottom: 8 }}>
+      <div className="animate-fade-slide-up" style={{ textAlign: 'center', marginBottom: 40 }}>
+        <div style={{ position: 'relative', display: 'inline-flex', marginBottom: 24 }}>
+          <div style={{ position: 'absolute', inset: 0, background: 'var(--nas-gold)', filter: 'blur(30px)', opacity: 0.3, borderRadius: '50%' }} />
+          <div style={{ fontSize: 64, position: 'relative', zIndex: 1, filter: 'drop-shadow(0 12px 24px rgba(0,0,0,0.5))' }}>✨</div>
+        </div>
+        <h1 style={{ fontSize: 36, fontWeight: 900, color: '#fff', letterSpacing: '-0.04em', marginBottom: 8, textShadow: '0 4px 16px rgba(0,0,0,0.5)' }}>
           Sipariş Takibi
         </h1>
-        <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.75)' }}>
-          Siparişinizi adım adım izleyin
+        <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.6)', fontWeight: 500 }}>
+          Zarafetinizi adım adım izleyin
         </p>
       </div>
 
-      <div className="card" style={{ width: '100%', maxWidth: 400, padding: 'var(--space-xl)' }}>
+      <div className="card animate-fade-slide-up delay-100" style={{ 
+        width: '100%', maxWidth: 400, padding: 'var(--space-2xl)',
+        background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(24px)', border: '1px solid rgba(255,255,255,0.1)',
+        borderRadius: 32, boxShadow: '0 32px 64px rgba(0,0,0,0.4)'
+      }}>
         <div className="input-group">
-          <label className="input-label">Sipariş Kodu</label>
+          <label style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.8)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, display: 'block' }}>Sipariş Kodu</label>
           <input
-            className="input-field"
-            placeholder="Örn: AB4KL"
-            value={code}
-            onChange={e => setCode(e.target.value.toUpperCase())}
-            maxLength={5}
-            style={{ textTransform: 'uppercase', letterSpacing: '0.15em', fontSize: 20, fontWeight: 700, textAlign: 'center' }}
+             placeholder="Örn: AB4KL"
+             value={code}
+             onChange={e => setCode(e.target.value.toUpperCase())}
+             maxLength={5}
+             style={{ 
+               width: '100%', padding: '16px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)',
+               borderRadius: 16, color: '#FFF', fontSize: 20, fontWeight: 800, textAlign: 'center', letterSpacing: '0.2em',
+               textTransform: 'uppercase', outline: 'none', transition: 'all 0.3s ease'
+             }}
+             onFocus={e => e.target.style.borderColor = 'var(--nas-gold)'}
+             onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
           />
         </div>
-        <div className="input-group">
-          <label className="input-label">Telefon Numarası</label>
-          <div className="input-prefix">
-            <span className="input-prefix__tag">+90</span>
+        <div className="input-group" style={{ marginTop: 24 }}>
+          <label style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.8)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, display: 'block' }}>Telefon Numarası</label>
+          <div style={{ display: 'flex', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 16, overflow: 'hidden' }}>
+            <span style={{ padding: '16px', fontSize: 16, fontWeight: 700, color: 'rgba(255,255,255,0.5)', background: 'rgba(0,0,0,0.2)' }}>+90</span>
             <input
               type="tel"
               placeholder="5XX XXX XX XX"
               value={phone}
               onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+              style={{
+                flex: 1, padding: '16px', background: 'transparent', border: 'none',
+                color: '#FFF', fontSize: 18, fontWeight: 600, outline: 'none', width: '100%'
+              }}
             />
           </div>
         </div>
-        {error && <div className="form-error" style={{ marginBottom: 12 }}>⚠️ {error}</div>}
+        {error && <div className="form-error" style={{ marginBottom: 16, marginTop: 16, background: 'rgba(239,68,68,0.1)', color: '#FCA5A5', padding: 12, borderRadius: 12 }}>⚠️ {error}</div>}
         <button
-          className="btn btn-primary w-full btn-lg"
+          className="btn-luxury-shimmer"
           disabled={code.length < 5 || phone.length < 10}
           onClick={() => onLogin(code, phone)}
+          style={{ width: '100%', marginTop: 32, padding: '18px', borderRadius: 999, fontSize: 16, fontWeight: 800, border: 'none', color: '#FFF', opacity: (code.length < 5 || phone.length < 10) ? 0.5 : 1, cursor: (code.length < 5 || phone.length < 10) ? 'not-allowed' : 'pointer' }}
         >
-          Siparişimi Göster 🔍
+          Devam Et
         </button>
       </div>
     </div>
@@ -189,25 +244,22 @@ function TrackerView({ order }: { order: Order }) {
         </div>
       </div>
 
-      <div style={{ padding: 'var(--space-lg)', marginTop: -24, position: 'relative', zIndex: 1 }}>
+      <div style={{ padding: 'var(--space-md)', marginTop: -32, position: 'relative', zIndex: 1 }}>
         <div style={{ maxWidth: 800, margin: '0 auto' }}>
         {/* Status Tracker */}
-        <div className="card" style={{ padding: 'var(--space-lg)', marginBottom: 'var(--space-md)' }}>
-          <div className="order-tracker">
+        <div style={{ padding: 'var(--space-2xl) var(--space-md) var(--space-xl)', background: '#FFF', borderRadius: 32, boxShadow: '0 24px 64px rgba(0,0,0,0.06)' }}>
+          <div className="cinematic-timeline">
 
             {/* STEP 1: Onay */}
-            <div className="tracker-item">
-              <div className="tracker-left">
-                <div className={`tracker-dot ${currentIdx > 0 ? 'done' : currentIdx === 0 ? 'active spin' : ''}`}>
-                  {currentIdx > 0 ? '✓' : '1'}
-                </div>
-                {currentIdx > 0 ? <div className="tracker-line done" /> : <div className="tracker-line" />}
+            <div className={`cinematic-node ${currentIdx > 0 ? 'done' : currentIdx === 0 ? 'active' : ''}`}>
+              <div className="cinematic-icon-box">
+                {currentIdx > 0 ? '✓' : '1'}
               </div>
-              <div className="tracker-content">
-                <div className={`tracker-title ${currentIdx === 0 ? 'active' : currentIdx > 0 ? 'done' : ''}`}>
+              <div className="cinematic-content">
+                <div style={{ fontSize: 18, fontWeight: 800, color: currentIdx >= 0 ? 'var(--nas-black)' : 'var(--gray-400)', marginBottom: 4 }}>
                   {currentIdx > 0 ? '✅ Sipariş Onaylandı' : 'Onay Bekleniyor'}
                 </div>
-                <div className="tracker-desc">
+                <div style={{ fontSize: 14, color: 'var(--gray-500)', lineHeight: 1.5 }}>
                   {currentIdx === 0
                     ? 'Siparişiniz incelenip en kısa sürede onaylanacaktır.'
                     : 'Siparişiniz onaylandı!'}
@@ -216,20 +268,17 @@ function TrackerView({ order }: { order: Order }) {
             </div>
 
             {/* STEP 2: Kapora */}
-            <div className="tracker-item">
-              <div className="tracker-left">
-                <div className={`tracker-dot ${currentIdx > 1 ? 'done' : currentIdx === 1 ? 'active spin' : ''}`}>
-                  {currentIdx > 1 ? '✓' : '2'}
-                </div>
-                {currentIdx > 1 ? <div className="tracker-line done" /> : <div className="tracker-line" />}
+            <div className={`cinematic-node ${currentIdx > 1 ? 'done' : currentIdx === 1 ? 'active' : ''}`}>
+              <div className="cinematic-icon-box">
+                {currentIdx > 1 ? '✓' : '2'}
               </div>
-              <div className="tracker-content">
-                <div className={`tracker-title ${currentIdx === 1 ? 'active' : currentIdx > 1 ? 'done' : ''}`}>
+              <div className="cinematic-content">
+                <div style={{ fontSize: 18, fontWeight: 800, color: currentIdx >= 1 ? 'var(--nas-black)' : 'var(--gray-400)', marginBottom: 4 }}>
                   {currentIdx > 1 ? '✅ Kapora Alındı' : currentIdx === 1 ? 'Kapora Bekleniyor' : 'Kapora'}
                 </div>
-                <div className="tracker-desc">
+                <div style={{ fontSize: 14, color: 'var(--gray-500)', lineHeight: 1.5 }}>
                   {currentIdx === 1 && !customerSent && iban && (
-                    <div style={{ marginTop: 8 }}>
+                    <div style={{ marginTop: 12 }}>
                       <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray-700)', marginBottom: 8 }}>
                         Lütfen aşağıdaki hesaba kapora gönderin:
                       </div>
@@ -237,7 +286,7 @@ function TrackerView({ order }: { order: Order }) {
                         <div style={{ fontSize: 12, color: 'var(--gray-500)', marginBottom: 4 }}>{iban.bankName}</div>
                         <CopyField label="Ad Soyad" value={iban.holderName} />
                         <CopyField label="IBAN" value={iban.iban} />
-                        <div style={{ marginTop: 12, padding: '10px 14px', background: 'var(--nas-rose-light)', borderRadius: 'var(--radius-md)' }}>
+                        <div style={{ marginTop: 12, padding: '10px 14px', background: 'var(--nas-cream)', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)' }}>
                           <div style={{ fontSize: 12, color: 'var(--gray-600)', marginBottom: 4 }}>Toplam: <strong>{formatCurrency(order.totalPrice)}</strong></div>
                           <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--nas-bordeaux)' }}>
                             Kapora (%{Math.round(state.settings.depositRate * 100)}): {formatCurrency(deposit)}
@@ -246,15 +295,15 @@ function TrackerView({ order }: { order: Order }) {
                       </div>
                       <button
                         className="btn btn-primary w-full"
-                        style={{ marginTop: 12 }}
+                        style={{ marginTop: 16, padding: '14px', borderRadius: 999 }}
                         onClick={handleCustomerSentDeposit}
                       >
-                        💸 Kaporayı Gönderdim, Dekont Attım
+                        💸 Kaporayı Gönderdim
                       </button>
                     </div>
                   )}
                   {currentIdx === 1 && customerSent && (
-                    <div style={{ marginTop: 6, padding: '10px 14px', background: 'var(--orange-bg)', borderRadius: 'var(--radius-md)', fontSize: 13, color: 'var(--orange-500)', fontWeight: 600 }}>
+                    <div style={{ marginTop: 12, padding: '12px 16px', background: 'var(--orange-bg)', borderRadius: 'var(--radius-md)', fontSize: 13, color: 'var(--orange-500)', fontWeight: 600 }}>
                       ⏳ Kapora kontrol ediliyor, onaylandığında bilgilendirileceksiniz.
                     </div>
                   )}
@@ -263,53 +312,44 @@ function TrackerView({ order }: { order: Order }) {
             </div>
 
             {/* STEP 3: Hazırlanıyor */}
-            <div className="tracker-item">
-              <div className="tracker-left">
-                <div className={`tracker-dot ${currentIdx > 2 ? 'done' : currentIdx === 2 ? 'active spin' : ''}`}>
-                  {currentIdx > 2 ? '✓' : '3'}
-                </div>
-                {currentIdx > 2 ? <div className="tracker-line done" /> : <div className="tracker-line" />}
+            <div className={`cinematic-node ${currentIdx > 2 ? 'done' : currentIdx === 2 ? 'active' : ''}`}>
+               <div className="cinematic-icon-box">
+                {currentIdx > 2 ? '✓' : '3'}
               </div>
-              <div className="tracker-content">
-                <div className={`tracker-title ${currentIdx === 2 ? 'active' : currentIdx > 2 ? 'done' : ''}`}>
+              <div className="cinematic-content">
+                <div style={{ fontSize: 18, fontWeight: 800, color: currentIdx >= 2 ? 'var(--nas-black)' : 'var(--gray-400)', marginBottom: 4 }}>
                   {currentIdx > 2 ? '✅ Sipariş Hazırlandı' : 'Sipariş Hazırlanıyor'}
                 </div>
-                <div className="tracker-desc">
+                <div style={{ fontSize: 14, color: 'var(--gray-500)', lineHeight: 1.5 }}>
                   {currentIdx === 2 && <PrepProgressBar eventDate={order.eventDate} />}
                 </div>
               </div>
             </div>
 
             {/* STEP 4: Hazır */}
-            <div className="tracker-item">
-              <div className="tracker-left">
-                <div className={`tracker-dot ${currentIdx > 3 ? 'done' : currentIdx === 3 ? 'active' : ''}`}>
-                  {currentIdx > 3 ? '✓' : '4'}
-                </div>
-                {currentIdx > 3 ? <div className="tracker-line done" /> : <div className="tracker-line" />}
+            <div className={`cinematic-node ${currentIdx > 3 ? 'done' : currentIdx === 3 ? 'active' : ''}`}>
+              <div className="cinematic-icon-box">
+                {currentIdx > 3 ? '✓' : '4'}
               </div>
-              <div className="tracker-content">
-                <div className={`tracker-title ${currentIdx === 3 ? 'active' : currentIdx > 3 ? 'done' : ''}`}>
+              <div className="cinematic-content">
+                <div style={{ fontSize: 18, fontWeight: 800, color: currentIdx >= 3 ? 'var(--nas-black)' : 'var(--gray-400)', marginBottom: 4 }}>
                   {currentIdx > 3 ? '✅ Teslim Edildi' : currentIdx === 3 ? '🎉 Siparişiniz Hazır!' : 'Siparişiniz Hazırlandı'}
                 </div>
-                <div className="tracker-desc">
+                <div style={{ fontSize: 14, color: 'var(--gray-500)', lineHeight: 1.5 }}>
                   {currentIdx === 3 && (
                     <>
                       <Confetti active />
                       <div style={{ marginTop: 8, fontSize: 14, color: 'var(--gray-600)', lineHeight: 1.6 }}>
                         Siparişinizi özenle hazırladık 🎀<br />
-                        Mesai saatleri içinde veya belirlediğiniz tarihte teslim alabilirsiniz.<br />
-                        <em style={{ color: 'var(--gray-400)', fontSize: 12 }}>Fotoğraflara bakmayı unutmayın 📸</em>
+                        Mesai saatleri içinde veya belirlediğiniz tarihte teslim alabilirsiniz.
                       </div>
-                      {/* Production photos */}
+                      
+                      {/* Mysterious Photo Reveal if photos exist */}
                       {order.productionPhotos.length > 0 && (
-                        <div style={{ marginTop: 12 }}>
-                          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--nas-bordeaux)', marginBottom: 8 }}>Hazırlık Fotoğrafları</div>
-                          <div className="upload-grid">
-                            {order.productionPhotos.map((img, i) => (
-                              <img key={i} src={img} alt="" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: 'var(--radius-md)' }} />
-                            ))}
-                          </div>
+                        <div style={{ marginTop: 24 }}>
+                           {order.productionPhotos.map((img, i) => (
+                              <BlurRevealPhoto key={i} src={img} />
+                           ))}
                         </div>
                       )}
                     </>
@@ -319,54 +359,58 @@ function TrackerView({ order }: { order: Order }) {
             </div>
 
             {/* STEP 5: Teslim */}
-            <div className="tracker-item">
-              <div className="tracker-left">
-                <div className={`tracker-dot ${currentIdx === 4 ? 'done' : ''}`}>
-                  {currentIdx === 4 ? '✓' : '5'}
-                </div>
+            <div className={`cinematic-node ${currentIdx === 4 ? 'done' : ''}`}>
+              <div className="cinematic-icon-box">
+                {currentIdx === 4 ? '✓' : '5'}
               </div>
-              <div className="tracker-content last">
-                <div className={`tracker-title ${currentIdx === 4 ? 'done' : ''}`}>
-                  {currentIdx === 4 ? '✅ Siparişiniz Teslim Edildi! 🥳' : 'Teslim'}
+              <div className="cinematic-content" style={{ opacity: currentIdx === 4 ? 1 : 0.4 }}>
+                <div style={{ fontSize: 18, fontWeight: 800, color: currentIdx === 4 ? 'var(--green-600)' : 'var(--gray-400)', marginBottom: 4 }}>
+                  {currentIdx === 4 ? '🥳 Siparişiniz Teslim Edildi!' : 'Teslim'}
                 </div>
-                <div className="tracker-desc">
+                <div style={{ fontSize: 14, color: 'var(--gray-500)', lineHeight: 1.5 }}>
                   {currentIdx === 4 && (
-                    <div style={{ marginTop: 8 }}>
-                      <p style={{ fontSize: 14, color: 'var(--gray-600)', lineHeight: 1.6, marginBottom: 12 }}>
-                        Programınız için sonsuz mutluluklar dileriz! 💕
+                    <div style={{ marginTop: 12 }}>
+                      <p style={{ fontSize: 14, color: 'var(--gray-600)', lineHeight: 1.6, marginBottom: 20 }}>
+                        Programınız için sonsuz mutluluklar dileriz! 💕 En güzel anılarınızı biriktirmeniz dileğiyle.
                       </p>
 
-                      {/* Program photo upload */}
-                      <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 8, color: 'var(--gray-700)' }}>
-                        📷 Programdan fotoğraf gönderir misiniz?
-                      </div>
-                      <p style={{ fontSize: 13, color: 'var(--gray-500)', marginBottom: 10, lineHeight: 1.5 }}>
-                        Gelecekteki çiftlerimize ilham kaynağı olur 🌸
-                      </p>
-                      {photoFiles.length > 0 && (
-                        <div className="upload-grid" style={{ marginBottom: 10 }}>
-                          {photoFiles.map((img, i) => (
-                            <img key={i} src={img} alt="" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: 'var(--radius-md)' }} />
-                          ))}
+                      {/* Premium Program photo upload */}
+                      <div style={{ background: '#F5F5F7', padding: 'var(--space-md)', borderRadius: 24, textAlign: 'center', marginBottom: 24 }}>
+                        <div style={{ fontSize: 32, marginBottom: 8 }}>📸</div>
+                        <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 6, color: 'var(--nas-black)' }}>
+                          Söz/Nişan Anısından Bir Kare?
                         </div>
-                      )}
-                      <label style={{ display: 'block' }}>
-                        <input type="file" accept="image/*" multiple hidden onChange={addPhoto} />
-                        <span className="btn btn-outline" style={{ display: 'block', textAlign: 'center' }}>+ Fotoğraf Ekle</span>
-                      </label>
+                        <p style={{ fontSize: 13, color: 'var(--gray-500)', marginBottom: 16, lineHeight: 1.4 }}>
+                          Gelecekteki çiftlerimize ilham kaynağı olmanız için programdan bir fotoğraf yollar mısınız?
+                        </p>
+                        
+                        {photoFiles.length > 0 && (
+                          <div className="upload-grid" style={{ marginBottom: 16 }}>
+                            {photoFiles.map((img, i) => (
+                              <img key={i} src={img} alt="" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: 'var(--radius-md)' }} />
+                            ))}
+                          </div>
+                        )}
+                        <label style={{ display: 'block' }}>
+                          <input type="file" accept="image/*" multiple hidden onChange={addPhoto} />
+                          <span className="btn-luxury-shimmer" style={{ display: 'inline-flex', padding: '12px 24px', borderRadius: 999, color: '#FFF', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Fotoğraf Yükle</span>
+                        </label>
+                      </div>
 
-                      {/* Google review */}
-                      <div style={{ marginTop: 16, padding: 'var(--space-md)', background: 'var(--gray-50)', borderRadius: 'var(--radius-xl)', textAlign: 'center' }}>
-                        <div style={{ fontSize: 24, marginBottom: 8 }}>⭐⭐⭐⭐⭐</div>
-                        <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 4 }}>Bizi Değerlendirin</div>
-                        <div style={{ fontSize: 13, color: 'var(--gray-500)', marginBottom: 12 }}>Google yorumunuz bizim için çok değerli!</div>
+                      {/* Apple Style Google review */}
+                      <div style={{ padding: 'var(--space-md)', background: '#FFF', border: '1px solid var(--gray-200)', borderRadius: 24, textAlign: 'center', boxShadow: '0 8px 16px rgba(0,0,0,0.03)' }}>
+                        <div style={{ fontSize: 32, marginBottom: 4 }}>⭐</div>
+                        <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 4, letterSpacing: '-0.02em', color: 'var(--nas-black)' }}>Bizi Değerlendirin</div>
+                        <div style={{ fontSize: 13, color: 'var(--gray-500)', marginBottom: 16 }}>Deneyiminiz Google'da yazın.</div>
                         <a
                           href={state.settings.googleReviewUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="btn btn-primary btn-sm"
+                          style={{
+                            display: 'inline-block', background: '#F5F5F7', color: '#4285F4', padding: '10px 24px', borderRadius: 999, fontWeight: 700, textDecoration: 'none', fontSize: 14, border: '1px solid rgba(66, 133, 244, 0.2)'
+                          }}
                         >
-                          Google'da Yorum Yaz ⭐
+                          Değerlendirme Yaz
                         </a>
                       </div>
                     </div>
