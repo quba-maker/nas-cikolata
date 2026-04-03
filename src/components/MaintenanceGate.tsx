@@ -35,13 +35,13 @@ export default function MaintenanceGate({ children }: { children: React.ReactNod
       padding: 'var(--space-xl)',
       textAlign: 'center'
     }}>
-      <div className="glass-block" style={{ padding: 'var(--space-2xl)', maxWidth: 480, width: '100%' }}>
-        <img src="/nas-icon.svg" alt="Nas Çikolata" style={{ width: 80, height: 80, marginBottom: 'var(--space-lg)' }} />
+      <div className="glass-block" style={{ padding: 'var(--space-2xl)', maxWidth: 480, width: '100%', background: '#fff' }}>
+        <img src="/logo.png" alt="Nas Çikolata" style={{ width: '80%', maxWidth: 240, height: 'auto', marginBottom: 'var(--space-xl)' }} />
         <h1 style={{ fontSize: 24, fontWeight: 800, color: 'var(--nas-bordeaux)', marginBottom: 'var(--space-md)' }}>
           Çok Yakında!
         </h1>
         <p style={{ fontSize: 16, color: 'var(--gray-600)', lineHeight: 1.6 }}>
-          Yepyeşi tasarımımızla sizlere daha premium bir hizmet sunmak için sitemizi güncelliyoruz. Birazdan buradayız.
+          Kız isteme setlerinde yeni nesil sipariş yönetimi sistemi çok yakında. Sizlere premium bir arayüz ve sistem sunmak için son güncellemeleri yapıyoruz.
         </p>
       </div>
     </div>
