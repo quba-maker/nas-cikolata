@@ -1011,64 +1011,64 @@ export default function OrderWizard() {
 
             <div style={{ padding: 'var(--space-md)' }}>
               <div style={{ position: 'relative', marginBottom: 16, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <h2 style={{ fontSize: 22, fontWeight: 800, margin: 0 }}>Aranjman Türünü Seçin</h2>
+                <h2 style={{ fontSize: 22, fontWeight: 800, margin: 0 }}>Çiçek Türünü Seçin</h2>
               </div>
               
-              <div className={`split-choice-container animate-fade-slide-up ${w.bouquetKind ? 'compact' : ''}`}>
+              <div className={`split-choice-container animate-fade-slide-up ${w.bouquetSubType ? 'compact' : ''}`}>
                 <div 
-                  className={`split-side left ${w.bouquetKind === 'buket' ? 'selected' : w.bouquetKind === 'kutu' ? 'unselected' : ''}`}
-                  onClick={() => setW(p => ({ ...p, bouquetKind: 'buket', bouquetSubType: undefined, selectedBouquet: undefined }))}
+                  className={`split-side left ${w.bouquetSubType === 'sakayik' ? 'selected' : w.bouquetSubType === 'yapay-gul' ? 'unselected' : ''}`}
+                  onClick={() => setW(p => ({ ...p, bouquetSubType: 'sakayik', bouquetKind: undefined, selectedBouquet: undefined }))}
                 >
-                  <img src="/buket.png" alt="Buket" />
-                  <div className="split-label">Buket<br/><small>Aranjmanlar</small></div>
+                  <img src="/sakayik.png" alt="Şakayık" />
+                  <div className="split-label">Şakayık<br/><small>Çeşitleri</small></div>
                 </div>
 
                 <div className="split-choice-divider" />
                 <div className="split-badge">VEYA</div>
 
                 <div 
-                  className={`split-side right ${w.bouquetKind === 'kutu' ? 'selected' : w.bouquetKind === 'buket' ? 'unselected' : ''}`}
-                  onClick={() => setW(p => ({ ...p, bouquetKind: 'kutu', bouquetSubType: undefined, selectedBouquet: undefined }))}
+                  className={`split-side right ${w.bouquetSubType === 'yapay-gul' ? 'selected' : w.bouquetSubType === 'sakayik' ? 'unselected' : ''}`}
+                  onClick={() => setW(p => ({ ...p, bouquetSubType: 'yapay-gul', bouquetKind: undefined, selectedBouquet: undefined }))}
                 >
-                  <img src="/kutu.png" alt="Kutu" />
-                  <div className="split-label" style={{textAlign: 'right'}}>Kutu<br/><small>Aranjmanlar</small></div>
+                  <img src="/gul.png" alt="Yapay Gül" />
+                  <div className="split-label" style={{textAlign: 'right'}}>Yapay Gül<br/><small>Çeşitleri</small></div>
                 </div>
               </div>
 
-              {w.bouquetKind && (
+              {w.bouquetSubType && (
                 <div className="animate-fade-slide-up" style={{ marginTop: 24 }}>
-                  <h2 style={{ fontSize: 22, fontWeight: 800, textAlign: 'center' }}>Çiçek Türünü Seçin</h2>
+                  <h2 style={{ fontSize: 22, fontWeight: 800, textAlign: 'center' }}>Aranjman Türünü Seçin</h2>
                   
-                  <div className={`split-choice-container animate-fade-slide-up ${w.bouquetSubType ? 'compact' : ''}`}>
+                  <div className={`split-choice-container animate-fade-slide-up ${w.bouquetKind ? 'compact' : ''}`}>
                     <div 
-                      className={`split-side left ${w.bouquetSubType === 'sakayik' ? 'selected' : w.bouquetSubType === 'yapay-gul' ? 'unselected' : ''}`}
+                      className={`split-side left ${w.bouquetKind === 'buket' ? 'selected' : w.bouquetKind === 'kutu' ? 'unselected' : ''}`}
                       onClick={() => {
-                        setW(p => ({ ...p, bouquetSubType: 'sakayik', selectedBouquet: undefined }));
+                        setW(p => ({ ...p, bouquetKind: 'buket', selectedBouquet: undefined }));
                         setTimeout(() => document.getElementById('section-buket-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
                       }}
                     >
-                      <img src="/sakayik.png" alt="Şakayık" />
-                      <div className="split-label">Şakayık<br/><small>Çeşitleri</small></div>
+                      <img src="/buket.png" alt="Buket" />
+                      <div className="split-label">Buket<br/><small>Aranjmanlar</small></div>
                     </div>
 
                     <div className="split-choice-divider" />
                     <div className="split-badge">VEYA</div>
 
                     <div 
-                      className={`split-side right ${w.bouquetSubType === 'yapay-gul' ? 'selected' : w.bouquetSubType === 'sakayik' ? 'unselected' : ''}`}
+                      className={`split-side right ${w.bouquetKind === 'kutu' ? 'selected' : w.bouquetKind === 'buket' ? 'unselected' : ''}`}
                       onClick={() => {
-                        setW(p => ({ ...p, bouquetSubType: 'yapay-gul', selectedBouquet: undefined }));
+                        setW(p => ({ ...p, bouquetKind: 'kutu', selectedBouquet: undefined }));
                         setTimeout(() => document.getElementById('section-buket-list')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
                       }}
                     >
-                      <img src="/gul.png" alt="Yapay Gül" />
-                      <div className="split-label" style={{textAlign: 'right'}}>Yapay Gül<br/><small>Çeşitleri</small></div>
+                      <img src="/kutu.png" alt="Kutu" />
+                      <div className="split-label" style={{textAlign: 'right'}}>Kutu<br/><small>Aranjmanlar</small></div>
                     </div>
                   </div>
                 </div>
               )}
 
-              {w.bouquetSubType && (
+              {w.bouquetKind && (
                 <div id="section-buket-list" className="animate-fade-slide-up" style={{ margin: '24px -var(--space-md) 0' }}>
                   <ProductCarousel
                     title={`${w.bouquetSubType === 'sakayik' ? 'Şakayık' : 'Yapay Gül'} ${w.bouquetKind === 'buket' ? 'Buketleri' : 'Kutuları'}`}
