@@ -253,7 +253,7 @@ function ProductForm({
         <div className="modal-footer">
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
             <button className="btn btn-secondary" onClick={onCancel}>İptal</button>
-            <button className="btn btn-primary" onClick={() => onSave(form)} disabled={!form.name}>
+            <button className="btn btn-primary" onClick={() => onSave(form)} disabled={!form.name || !form.categoryId}>
               {initial?.id ? 'Güncelle' : 'Ekle'}
             </button>
           </div>

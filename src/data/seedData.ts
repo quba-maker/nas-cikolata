@@ -1751,10 +1751,13 @@ export function loadState(): AppState {
     if (raw) {
       const parsed = JSON.parse(raw) as Partial<AppState>;
 
-      // Always sync key fields from seed data so logic/CDN updates are reflected
       const mergedProducts = (parsed.products ?? defaultState.products).map(p => {
         const seed = defaultState.products.find(s => s.id === p.id);
-        if (seed) return { ...p, imageUrl: seed.imageUrl, gallery: seed.gallery, categoryId: seed.categoryId, subCategoryId: seed.subCategoryId, type: seed.type, subType: seed.subType };
+        if (seed) {
+          // Sadece tip gibi sabit olmasını istediğimiz kritik yapısal verileri eşitle, 
+          // kullanıcının değiştirebileceği imageUrl, categoryId vs. alanlarına DOKUNMA!
+          return { ...p, type: seed.type, subType: seed.subType };
+        }
         return p;
       });
       // Append any new products that exist in defaultState but not in parsed
