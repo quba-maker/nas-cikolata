@@ -60,7 +60,7 @@ export default function AdminLandingSettings() {
       )}
 
       {/* HEADER & GLOBAL TEXTS */}
-      <div className="card" style={{ padding: 'var(--space-lg)' }}>
+      <div className="glass-block" style={{ padding: 'var(--space-lg)', background: '#fff' }}>
         <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--nas-bordeaux)', marginBottom: 'var(--space-xl)' }}>
           Ana Sayfa & Global Metinler
         </div>
@@ -101,7 +101,7 @@ export default function AdminLandingSettings() {
       </div>
 
       {/* ZENGİN ÜRÜN ÇEŞİTLİLİĞİ */}
-      <div className="card" style={{ padding: 'var(--space-lg)' }}>
+      <div className="glass-block" style={{ padding: 'var(--space-lg)', background: '#fff' }}>
         <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--nas-bordeaux)', marginBottom: 'var(--space-xl)' }}>
           Ürün Çeşitliliği & Koleksiyon Kartları
         </div>
@@ -197,7 +197,7 @@ export default function AdminLandingSettings() {
       </div>
 
       {/* SİHİRLİ ANLAR (BENTO) */}
-      <div className="card" style={{ padding: 'var(--space-lg)' }}>
+      <div className="glass-block" style={{ padding: 'var(--space-lg)', background: '#fff' }}>
         <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--nas-bordeaux)', marginBottom: 'var(--space-xl)' }}>
           Sihirli Anlar (Bento Grid)
         </div>
@@ -262,7 +262,7 @@ export default function AdminLandingSettings() {
       </div>
 
       {/* GOOGLE REVIEWS */}
-      <div className="card" style={{ padding: 'var(--space-lg)' }}>
+      <div className="glass-block" style={{ padding: 'var(--space-lg)', background: '#fff' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-xl)' }}>
           <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--nas-bordeaux)' }}>Google Yorumlarımız</div>
           <button className="btn btn-primary btn-sm" onClick={() => {
@@ -341,7 +341,7 @@ export default function AdminLandingSettings() {
       </div>
 
       {/* SSS */}
-      <div className="card" style={{ padding: 'var(--space-lg)' }}>
+      <div className="glass-block" style={{ padding: 'var(--space-lg)', background: '#fff' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-xl)' }}>
           <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--nas-bordeaux)' }}>S.S.S (Sıkça Sorulan Sorular)</div>
           <button className="btn btn-primary btn-sm" onClick={() => {

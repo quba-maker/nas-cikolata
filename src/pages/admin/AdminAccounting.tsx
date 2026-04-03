@@ -89,7 +89,7 @@ export default function AdminAccounting() {
       </div>
 
       {/* Partners */}
-      <div className="card" style={{ padding: 'var(--space-lg)', marginBottom: 'var(--space-md)' }}>
+      <div className="glass-block" style={{ padding: 'var(--space-lg)', marginBottom: 'var(--space-md)', background: '#fff' }}>
         <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 'var(--space-md)' }}>👥 Ortaklar</div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-md)' }}>
           {/* Ortak 1 */}
@@ -141,7 +141,7 @@ export default function AdminAccounting() {
       </div>
 
       {/* Order cost table */}
-      <div className="card" style={{ padding: 'var(--space-lg)' }}>
+      <div className="glass-block" style={{ padding: 'var(--space-lg)', background: '#fff' }}>
         <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 'var(--space-md)' }}>📋 Sipariş Listesi</div>
         {periodOrders.length === 0 ? (
           <div style={{ textAlign: 'center', color: 'var(--gray-400)', padding: 'var(--space-xl)', fontSize: 14 }}>Bu dönemde sipariş yok</div>

@@ -72,41 +72,49 @@ function OrderList() {
       </div>
 
       {/* Order cards */}
-      <div style={{ padding: '0 var(--space-md)', display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
+      <div style={{ padding: '0 var(--space-md)', display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)', marginTop: 16 }}>
         {filtered.length === 0 && (
-          <div style={{ textAlign: 'center', padding: 'var(--space-3xl)', color: 'var(--gray-400)' }}>
-            <div style={{ fontSize: 48, marginBottom: 12 }}>📭</div>
-            <div>Sipariş bulunamadı</div>
+          <div className="glass-block" style={{ textAlign: 'center', padding: 'var(--space-3xl)', color: 'var(--gray-400)' }}>
+            <div style={{ fontSize: 64, marginBottom: 16 }}>📭</div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--gray-900)' }}>Sipariş bulunamadı</div>
           </div>
         )}
-        {filtered.map(o => {
-          const days = daysUntil(o.deliveryDate);
-          const pct = STATUS_PROGRESS[o.status];
-          return (
-            <div key={o.id} className="order-card" onClick={() => navigate(`/admin/siparisler/${o.id}`)}>
-              <div className="order-card__avatar">{getInitials(o.bride, o.groom)}</div>
-              <div className="order-card__main">
-                <div className="order-card__names">{o.bride} & {o.groom}</div>
-                <div className="order-card__category">{o.categoryName || (o.selectedSet?.name ?? 'Özel Sipariş')}</div>
-                <div className="order-card__progress">
-                  <div className="order-card__bar">
-                    <div className="order-card__bar-fill" style={{ width: `${pct}%` }} />
-                  </div>
-                  <span className="order-card__status-label" style={{ color: STATUS_COLORS[o.status] }}>
+        <div className="glass-block" style={{ background: '#fff', padding: 'var(--space-xs)' }}>
+          {filtered.map((o, idx) => {
+            const days = daysUntil(o.deliveryDate);
+            return (
+              <div
+                key={o.id}
+                className="glass-list-item"
+                onClick={() => navigate(`/admin/siparisler/${o.id}`)}
+                style={{
+                  display: 'flex', alignItems: 'center', padding: '16px', gap: 16, cursor: 'pointer',
+                  border: 'none', borderBottom: idx < filtered.length - 1 ? '1px solid var(--gray-100)' : 'none',
+                  borderRadius: 0, margin: 0, background: 'transparent', boxShadow: 'none'
+                }}
+              >
+                <div style={{ background: 'var(--gray-100)', minWidth: 44, height: 44, borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: 'var(--gray-600)', fontSize: 14 }}>
+                  {getInitials(o.bride, o.groom)}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--gray-900)', letterSpacing: '-0.01em' }}>{o.bride} & {o.groom}</div>
+                  <div style={{ fontSize: 12, color: 'var(--gray-500)', fontWeight: 500 }}>{o.categoryName || (o.selectedSet?.name ?? 'Özel Sipariş')}</div>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <div className="badge" style={{ background: 'var(--gray-100)', color: STATUS_COLORS[o.status], marginBottom: 4 }}>
                     {STATUS_LABELS[o.status]}
-                  </span>
+                  </div>
+                  <div style={{ fontSize: 12, fontWeight: 700 }}>
+                    {formatCurrency(o.totalPrice)}
+                  </div>
+                  <div style={{ fontSize: 11, color: days <= 2 ? 'var(--red-500)' : days <= 5 ? 'var(--orange-500)' : 'var(--gray-400)', fontWeight: 600, marginTop: 2 }}>
+                    {days > 0 ? `${days} gün kaldı` : days === 0 ? 'Bugün!' : 'Gecikti'}
+                  </div>
                 </div>
               </div>
-              <div className="order-card__right">
-                <div className="order-card__date">{formatDateShort(o.deliveryDate)}</div>
-                <div className="order-card__days" style={{ color: days <= 2 ? 'var(--red-500)' : days <= 5 ? 'var(--orange-500)' : 'var(--gray-400)' }}>
-                  {days > 0 ? `${days} gün` : days === 0 ? 'Bugün' : 'Geçti'}
-                </div>
-                <div className="order-card__price">{formatCurrency(o.totalPrice)}</div>
-              </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </div>
   );
@@ -216,7 +224,7 @@ function OrderDetail() {
       <div style={{ padding: 'var(--space-md)', display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
 
         {/* PROCESS TRACKER — Interactive */}
-        <div className="card" style={{ padding: 'var(--space-lg)' }}>
+        <div className="glass-block" style={{ padding: 'var(--space-lg)', background: '#fff' }}>
           <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--gray-700)', marginBottom: 'var(--space-md)' }}>Sipariş Süreci</div>
 
           <div className="order-tracker">
@@ -421,7 +429,7 @@ function OrderDetail() {
         </div>
 
         {/* ATÖLYE SECTION */}
-        <div className="card" style={{ padding: 'var(--space-lg)' }}>
+        <div className="glass-block" style={{ padding: 'var(--space-lg)', background: '#fff' }}>
           <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--gray-700)', marginBottom: 'var(--space-md)' }}>🏭 Atölye</div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-md)' }}>
             {/* Buket / Set */}
@@ -470,7 +478,7 @@ function OrderDetail() {
         </div>
 
         {/* ORDER DETAILS */}
-        <div className="card" style={{ padding: 'var(--space-lg)' }}>
+        <div className="glass-block" style={{ padding: 'var(--space-lg)', background: '#fff' }}>
           <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--gray-700)', marginBottom: 'var(--space-md)' }}>Sipariş Detayları</div>
           <div className="summary-section" style={{ margin: 0 }}>
             {[

@@ -11,20 +11,33 @@ export default function AdminBottomNav() {
   ];
 
   return (
-    <nav className="bottom-nav">
-      {items.map(item => {
-        const active = pathname === item.path || (item.path !== '/admin' && pathname.startsWith(item.path));
-        return (
-          <button
-            key={item.path}
-            className={`bottom-nav__item ${active ? 'active' : ''}`}
-            onClick={() => navigate(item.path)}
-          >
-            <span className="bottom-nav__icon">{item.icon}</span>
-            <span className="bottom-nav__label">{item.label}</span>
-          </button>
-        );
-      })}
-    </nav>
+    <div style={{ position: 'fixed', bottom: 20, left: 0, right: 0, display: 'flex', justifyContent: 'center', zIndex: 100, pointerEvents: 'none' }}>
+      <nav className="floating-dock" style={{ display: 'flex', padding: '12px 24px', gap: 32, pointerEvents: 'auto' }}>
+        {items.map(item => {
+          const active = pathname === item.path || (item.path !== '/admin' && pathname.startsWith(item.path));
+          return (
+            <button
+              key={item.path}
+              onClick={() => navigate(item.path)}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 4,
+                cursor: 'pointer',
+                opacity: active ? 1 : 0.5,
+                transform: active ? 'scale(1.1)' : 'scale(1)',
+                transition: 'all var(--transition-spring)'
+              }}
+            >
+              <span style={{ fontSize: 22 }}>{item.icon}</span>
+              <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--nas-bordeaux)' }}>{item.label}</span>
+            </button>
+          );
+        })}
+      </nav>
+    </div>
   );
 }

@@ -322,37 +322,32 @@ export default function AdminProducts() {
 
       {/* Product list */}
       {products.length === 0 && (
-        <div style={{ textAlign: 'center', padding: 'var(--space-3xl)', color: 'var(--gray-400)' }}>
-          <div style={{ fontSize: 48, marginBottom: 12 }}>📦</div>
-          <div>Henüz ürün yok</div>
-          <button className="btn btn-primary" style={{ marginTop: 16 }} onClick={() => setEditing('new')}>+ Ürün Ekle</button>
+        <div className="glass-block" style={{ textAlign: 'center', padding: 'var(--space-3xl)', margin: 'var(--space-md) 0' }}>
+          <div style={{ fontSize: 64, marginBottom: 16 }}>📦</div>
+          <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--gray-900)' }}>Henüz bu kategoride ürün yok</div>
         </div>
       )}
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
-        {products.map(p => (
-          <div key={p.id} style={{
-            background: '#fff', borderRadius: 'var(--radius-xl)', padding: 'var(--space-md)',
-            boxShadow: 'var(--shadow-sm)', display: 'flex', alignItems: 'center', gap: 'var(--space-md)',
+      <div className="glass-block" style={{ background: '#fff', padding: 'var(--space-xs)' }}>
+        {products.map((p, idx) => (
+          <div key={p.id} className="glass-list-item" style={{
+            display: 'flex', alignItems: 'center', padding: '12px', gap: 'var(--space-md)',
+            border: 'none', borderBottom: idx < products.length - 1 ? '1px solid var(--gray-100)' : 'none',
+            borderRadius: 0, margin: 0, background: 'transparent', boxShadow: 'none'
           }}>
             <img src={p.imageUrl || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect fill="%23f3f4f6" width="80" height="80"/></svg>'}
-              alt={p.name} style={{ width: 60, height: 60, borderRadius: 'var(--radius-md)', objectFit: 'cover', flexShrink: 0 }} />
+              alt={p.name} style={{ width: 56, height: 56, borderRadius: 'var(--radius-md)', objectFit: 'cover', flexShrink: 0 }} />
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 2 }}>{p.name}</div>
-              <div style={{ fontSize: 12, color: 'var(--gray-500)', marginBottom: 4 }}>{p.description?.slice(0, 60)}{p.description?.length > 60 ? '...' : ''}</div>
+              <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 2, color: 'var(--gray-900)', letterSpacing: '-0.01em' }}>{p.name}</div>
+              <div style={{ fontSize: 12, color: 'var(--gray-500)', marginBottom: 6, opacity: 0.9 }}>{p.description?.slice(0, 60)}{p.description?.length > 60 ? '...' : ''}</div>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-                <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--nas-bordeaux)' }}>{formatCurrency(p.price)}</span>
-                <span style={{ fontSize: 11, color: 'var(--gray-400)' }}>Maliyet: {formatCurrency(p.cost)}</span>
+                <span style={{ fontSize: 14, fontWeight: 800, color: 'var(--nas-bordeaux)' }}>{formatCurrency(p.price)}</span>
+                <span style={{ fontSize: 11, color: 'var(--gray-400)', fontWeight: 600 }}>Maliyet: {formatCurrency(p.cost)}</span>
                 {!p.isActive && <span className="badge badge-gray">Pasif</span>}
-                {p.badge && <span className={`badge ${p.badge === 'cok-satilan' ? 'badge-orange' : p.badge === 'indirim' ? 'badge-red' : 'badge-rose'}`}>{p.badge}</span>}
               </div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <button className="btn btn-sm btn-secondary" onClick={() => setEditing(p)}>✏️</button>
-              <button className="btn btn-sm" style={{ background: 'var(--red-bg)', color: 'var(--red-500)' }}
-                onClick={() => { if (confirm('Ürünü sil?')) dispatch({ type: 'DELETE_PRODUCT', id: p.id }); }}>
-                🗑️
-              </button>
+              <button className="btn btn-sm" style={{ background: 'var(--gray-100)', color: 'var(--gray-800)' }} onClick={() => setEditing(p)}>✏️ Düzenle</button>
             </div>
           </div>
         ))}
