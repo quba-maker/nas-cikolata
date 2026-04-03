@@ -55,9 +55,9 @@ export default function AdminLandingSettings() {
       )}
 
       {/* HEADER & GLOBAL TEXTS */}
-      <div className="glass-block" style={{ padding: 'var(--space-lg)', background: '#fff' }}>
-        <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--nas-bordeaux)', marginBottom: 'var(--space-xl)' }}>
-          Ana Sayfa & Global Metinler
+      <div className="dashboard-panel-card" style={{ padding: 'var(--space-xl)', background: '#fff' }}>
+        <div className="dashboard-inner-header" style={{ marginBottom: 'var(--space-md)' }}>
+          ANA SAYFA & GLOBAL METİNLER
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div className="input-group" style={{ marginBottom: 0 }}>
@@ -96,9 +96,9 @@ export default function AdminLandingSettings() {
       </div>
 
       {/* ZENGİN ÜRÜN ÇEŞİTLİLİĞİ */}
-      <div className="glass-block" style={{ padding: 'var(--space-lg)', background: '#fff' }}>
-        <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--nas-bordeaux)', marginBottom: 'var(--space-xl)' }}>
-          Ürün Çeşitliliği & Koleksiyon Kartları
+      <div className="dashboard-panel-card" style={{ padding: 'var(--space-xl)', background: '#fff' }}>
+        <div className="dashboard-inner-header" style={{ marginBottom: 'var(--space-md)' }}>
+          ZENGİN ÜRÜN ÇEŞİTLİLİĞİ (KATEGORİLER)
         </div>
         <div className="input-group">
           <label className="input-label">Bölüm Başlığı</label>
@@ -189,9 +189,9 @@ export default function AdminLandingSettings() {
       </div>
 
       {/* SİHİRLİ ANLAR (BENTO) */}
-      <div className="glass-block" style={{ padding: 'var(--space-lg)', background: '#fff' }}>
-        <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--nas-bordeaux)', marginBottom: 'var(--space-xl)' }}>
-          Sihirli Anlar (Bento Grid)
+      <div className="dashboard-panel-card" style={{ padding: 'var(--space-xl)', background: '#fff' }}>
+        <div className="dashboard-inner-header" style={{ marginBottom: 'var(--space-md)' }}>
+          SİHİRLİ ANLAR (BENTO GRID)
         </div>
         <div style={{ display: 'flex', gap: 16, marginBottom: 24 }}>
           <div style={{ flex: 1 }}>
@@ -254,9 +254,9 @@ export default function AdminLandingSettings() {
       </div>
 
       {/* GOOGLE REVIEWS */}
-      <div className="glass-block" style={{ padding: 'var(--space-lg)', background: '#fff' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-xl)' }}>
-          <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--nas-bordeaux)' }}>Google Yorumlarımız</div>
+      <div className="dashboard-panel-card" style={{ padding: 'var(--space-xl)', background: '#fff' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-md)' }}>
+          <div className="dashboard-inner-header">GOOGLE YORUMLARIMIZ</div>
           <button className="btn btn-primary btn-sm" onClick={() => {
             const up = [...local.googleReviews, { name: 'Müşteri Adı', date: 'Yeni', text: 'Harika bir alışverişti.', letter: 'M', avatarBg: '#4ADE80' }];
             setLocal(p => ({ ...p, googleReviews: up }));
@@ -330,9 +330,9 @@ export default function AdminLandingSettings() {
       </div>
 
       {/* SSS */}
-      <div className="glass-block" style={{ padding: 'var(--space-lg)', background: '#fff' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-xl)' }}>
-          <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--nas-bordeaux)' }}>S.S.S (Sıkça Sorulan Sorular)</div>
+      <div className="dashboard-panel-card" style={{ padding: 'var(--space-xl)', background: '#fff' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-md)' }}>
+          <div className="dashboard-inner-header">S.S.S (SIKÇA SORULAN SORULAR)</div>
           <button className="btn btn-primary btn-sm" onClick={() => {
             const up = [...local.faqData, { q: 'Yeni Soru', a: 'Cevap' }];
             setLocal(p => ({ ...p, faqData: up }));
