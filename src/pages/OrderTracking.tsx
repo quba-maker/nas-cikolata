@@ -52,50 +52,49 @@ function TrackingLogin({ onLogin, error }: { onLogin: (code: string, phone: stri
   }, []);
 
   return (
-    <div className="mobile-wrapper" style={{
+    <div className="mobile-wrapper keynote-bg" style={{
       minHeight: '100vh',
-      background: 'radial-gradient(ellipse at top, var(--nas-bordeaux-3) 0%, var(--nas-black) 100%)',
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
       padding: 'var(--space-xl)',
     }}>
       <div className="animate-fade-slide-up" style={{ textAlign: 'center', marginBottom: 40 }}>
         <div style={{ position: 'relative', display: 'inline-flex', marginBottom: 24 }}>
-          <div style={{ position: 'absolute', inset: 0, background: 'var(--nas-gold)', filter: 'blur(30px)', opacity: 0.3, borderRadius: '50%' }} />
-          <div style={{ fontSize: 64, position: 'relative', zIndex: 1, filter: 'drop-shadow(0 12px 24px rgba(0,0,0,0.5))' }}>✨</div>
+          <div style={{ position: 'absolute', inset: 0, background: 'var(--nas-gold)', filter: 'blur(30px)', opacity: 0.2, borderRadius: '50%' }} />
+          <div style={{ fontSize: 64, position: 'relative', zIndex: 1, filter: 'drop-shadow(0 12px 24px rgba(0,0,0,0.1))' }}>✨</div>
         </div>
-        <h1 style={{ fontSize: 36, fontWeight: 900, color: '#fff', letterSpacing: '-0.04em', marginBottom: 8, textShadow: '0 4px 16px rgba(0,0,0,0.5)' }}>
+        <h1 style={{ fontSize: 36, fontWeight: 900, color: 'var(--nas-black)', letterSpacing: '-0.04em', marginBottom: 8 }}>
           Sipariş Takibi
         </h1>
-        <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.6)', fontWeight: 500 }}>
+        <p style={{ fontSize: 16, color: 'var(--gray-500)', fontWeight: 500 }}>
           Zarafetinizi adım adım izleyin
         </p>
       </div>
 
       <div className="card animate-fade-slide-up delay-100" style={{ 
         width: '100%', maxWidth: 400, padding: 'var(--space-2xl)',
-        background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(24px)', border: '1px solid rgba(255,255,255,0.1)',
-        borderRadius: 32, boxShadow: '0 32px 64px rgba(0,0,0,0.4)'
+        background: '#FFF', border: '1px solid rgba(0,0,0,0.05)',
+        borderRadius: 32, boxShadow: '0 32px 64px rgba(0,0,0,0.08)'
       }}>
         <div className="input-group">
-          <label style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.8)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, display: 'block' }}>Sipariş Kodu</label>
+          <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, display: 'block' }}>Sipariş Kodu</label>
           <input
              placeholder="Örn: AB4KL"
              value={code}
              onChange={e => setCode(e.target.value.toUpperCase())}
              maxLength={5}
              style={{ 
-               width: '100%', padding: '16px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)',
-               borderRadius: 16, color: '#FFF', fontSize: 20, fontWeight: 800, textAlign: 'center', letterSpacing: '0.2em',
+               width: '100%', padding: '16px', background: 'var(--gray-50)', border: '1px solid rgba(0,0,0,0.1)',
+               borderRadius: 16, color: 'var(--nas-black)', fontSize: 20, fontWeight: 800, textAlign: 'center', letterSpacing: '0.2em',
                textTransform: 'uppercase', outline: 'none', transition: 'all 0.3s ease'
              }}
              onFocus={e => e.target.style.borderColor = 'var(--nas-gold)'}
-             onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
+             onBlur={e => e.target.style.borderColor = 'rgba(0,0,0,0.1)'}
           />
         </div>
         <div className="input-group" style={{ marginTop: 24 }}>
-          <label style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.8)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, display: 'block' }}>Telefon Numarası</label>
-          <div style={{ display: 'flex', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 16, overflow: 'hidden' }}>
-            <span style={{ padding: '16px', fontSize: 16, fontWeight: 700, color: 'rgba(255,255,255,0.5)', background: 'rgba(0,0,0,0.2)' }}>+90</span>
+          <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, display: 'block' }}>Telefon Numarası</label>
+          <div style={{ display: 'flex', background: 'var(--gray-50)', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 16, overflow: 'hidden' }}>
+            <span style={{ padding: '16px', fontSize: 16, fontWeight: 700, color: 'var(--gray-500)', background: 'var(--gray-50)' }}>+90</span>
             <input
               type="tel"
               placeholder="5XX XXX XX XX"
@@ -103,12 +102,12 @@ function TrackingLogin({ onLogin, error }: { onLogin: (code: string, phone: stri
               onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
               style={{
                 flex: 1, padding: '16px', background: 'transparent', border: 'none',
-                color: '#FFF', fontSize: 18, fontWeight: 600, outline: 'none', width: '100%'
+                color: 'var(--nas-black)', fontSize: 18, fontWeight: 600, outline: 'none', width: '100%'
               }}
             />
           </div>
         </div>
-        {error && <div className="form-error" style={{ marginBottom: 16, marginTop: 16, background: 'rgba(239,68,68,0.1)', color: '#FCA5A5', padding: 12, borderRadius: 12 }}>⚠️ {error}</div>}
+        {error && <div className="form-error" style={{ marginBottom: 16, marginTop: 16, background: 'rgba(239,68,68,0.1)', color: '#EF4444', padding: 12, borderRadius: 12 }}>⚠️ {error}</div>}
         <button
           className="btn-luxury-shimmer"
           disabled={code.length < 5 || phone.length < 10}
@@ -201,14 +200,13 @@ function TrackerView({ order }: { order: Order }) {
     });
   };
 
-  // Auto scroll to active keynote card
+  // Auto scroll to active keynote card vertically
   useEffect(() => {
     const list = document.querySelector('.keynote-carousel');
     const active = document.querySelector('.keynote-card.active');
     if (list && active) {
       setTimeout(() => {
-        // center the active element in the viewport
-        active.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        active.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 500);
     }
   }, [currentIdx]);
@@ -218,20 +216,20 @@ function TrackerView({ order }: { order: Order }) {
       
       {/* KEYNOTE HEADER */}
       <div style={{ padding: 'var(--space-2xl) var(--space-xl) 0', textAlign: 'center', position: 'relative', zIndex: 10 }}>
-        <div style={{ fontSize: 11, color: '#C9A96E', letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 16, fontWeight: 800 }}>
+        <div style={{ fontSize: 12, color: 'var(--nas-bordeaux)', letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 16, fontWeight: 800 }}>
           Nas Özel Koleksiyon
         </div>
         <h1 className="text-shimmer-gold" style={{ fontSize: 36, fontWeight: 900, letterSpacing: '-0.04em', lineHeight: 1.1, marginBottom: 12 }}>
           Mükemmellik <br />Hazırlanıyor.
         </h1>
-        <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.50)', maxWidth: 280, margin: '0 auto' }}>
-          {order.bride} & {order.groom} için sipariş süreci
+        <p style={{ fontSize: 15, color: 'var(--gray-500)', maxWidth: 280, margin: '0 auto' }}>
+          <strong style={{ color: 'var(--nas-black)' }}>{order.bride} & {order.groom}</strong> için sipariş süreci
         </p>
 
-        <div style={{ marginTop: 24, display: 'inline-flex', gap: 16, background: 'rgba(255,255,255,0.05)', borderRadius: 999, padding: '8px 16px', border: '1px solid rgba(255,255,255,0.05)' }}>
-          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.8)' }}><span style={{ color: '#C9A96E', marginRight: 4 }}>Program</span>{formatDate(order.eventDate)}</div>
-          <div style={{ width: 1, background: 'rgba(255,255,255,0.2)' }} />
-          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.8)' }}><span style={{ color: '#C9A96E', marginRight: 4 }}>Teslim</span>{formatDate(order.deliveryDate)}</div>
+        <div style={{ marginTop: 24, display: 'inline-flex', gap: 16, background: '#FFF', borderRadius: 999, padding: '8px 16px', border: '1px solid rgba(0,0,0,0.05)', boxShadow: '0 8px 16px rgba(0,0,0,0.04)' }}>
+          <div style={{ fontSize: 12, color: 'var(--gray-600)' }}><span style={{ color: 'var(--nas-bordeaux)', marginRight: 4, fontWeight: 700 }}>Program</span>{formatDate(order.eventDate)}</div>
+          <div style={{ width: 1, background: 'rgba(0,0,0,0.1)' }} />
+          <div style={{ fontSize: 12, color: 'var(--gray-600)' }}><span style={{ color: 'var(--nas-bordeaux)', marginRight: 4, fontWeight: 700 }}>Teslim</span>{formatDate(order.deliveryDate)}</div>
         </div>
       </div>
 
@@ -240,14 +238,14 @@ function TrackerView({ order }: { order: Order }) {
         <div className="keynote-carousel">
           
           {/* STEP 1: Onay */}
-          <div className={`keynote-card ${currentIdx === 0 ? 'active' : currentIdx > 0 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', inline: 'center'})}>
+          <div className={`keynote-card ${currentIdx === 0 ? 'active' : currentIdx > 0 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', block: 'center'})}>
             <div className="keynote-card-icon">{currentIdx > 0 ? '✅' : '📨'}</div>
             <div className="keynote-card-title">{currentIdx > 0 ? 'Onaylandı' : 'Onay Bekleniyor'}</div>
             <div className="keynote-card-desc">Sipariş alındı. Detaylar inceleniyor, kısa süre içerisinde işleme alınacak.</div>
           </div>
 
           {/* STEP 2: Kapora */}
-          <div className={`keynote-card ${currentIdx === 1 ? 'active' : currentIdx > 1 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', inline: 'center'})}>
+          <div className={`keynote-card ${currentIdx === 1 ? 'active' : currentIdx > 1 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', block: 'center'})}>
             <div className="keynote-card-icon">{currentIdx > 1 ? '💸' : '💎'}</div>
             <div className="keynote-card-title">{currentIdx > 1 ? 'Kapora Alındı' : currentIdx === 1 ? 'Ödeme Bekleniyor' : 'Kapora'}</div>
             <div className="keynote-card-desc">
@@ -256,13 +254,13 @@ function TrackerView({ order }: { order: Order }) {
                 : 'Siparişin üretime girmesi için kapora işleminin tamamlanması gerekmektedir.'}
             </div>
             {currentIdx === 1 && !customerSent && iban && (
-              <div style={{ marginTop: 24, padding: '16px', background: 'rgba(0,0,0,0.3)', borderRadius: 24, border: '1px solid rgba(255,255,255,0.1)' }}>
-                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>Ödeme Bilgileri</div>
+              <div style={{ marginTop: 24, padding: '16px', background: 'var(--gray-50)', borderRadius: 24, border: '1px solid rgba(0,0,0,0.05)' }}>
+                <div style={{ fontSize: 11, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>Ödeme Bilgileri</div>
                 <CopyField label="Ad Soyad" value={iban.holderName} />
                 <CopyField label="IBAN" value={iban.iban} />
-                <div style={{ marginTop: 16, padding: '12px', background: 'rgba(201,169,110,0.1)', borderRadius: 16, textAlign: 'center' }}>
-                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)' }}>Toplam: {formatCurrency(order.totalPrice)}</div>
-                  <div style={{ fontSize: 16, fontWeight: 800, color: '#C9A96E', marginTop: 4 }}>Kapora: {formatCurrency(deposit)}</div>
+                <div style={{ marginTop: 16, padding: '12px', background: '#FFF', borderRadius: 16, textAlign: 'center', boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}>
+                  <div style={{ fontSize: 12, color: 'var(--gray-500)' }}>Toplam: {formatCurrency(order.totalPrice)}</div>
+                  <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--nas-bordeaux)', marginTop: 4 }}>Kapora: {formatCurrency(deposit)}</div>
                 </div>
                 <button
                   className="btn-luxury-shimmer"
@@ -274,15 +272,15 @@ function TrackerView({ order }: { order: Order }) {
               </div>
             )}
             {currentIdx === 1 && customerSent && (
-              <div style={{ marginTop: 20, padding: 16, background: 'rgba(255,255,255,0.05)', borderRadius: 16, textAlign: 'center', border: '1px solid rgba(255,255,255,0.1)' }}>
+              <div style={{ marginTop: 20, padding: 16, background: 'var(--nas-cream)', borderRadius: 16, textAlign: 'center', border: '1px solid rgba(201,169,110,0.2)' }}>
                 <span className="animate-pulse" style={{ display: 'inline-block', fontSize: 24, marginBottom: 8 }}>⏳</span>
-                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)' }}>Dekont inceleniyor</div>
+                <div style={{ fontSize: 13, color: 'var(--nas-bordeaux)' }}>Dekont inceleniyor, onaylandığında bilgilendirileceksiniz.</div>
               </div>
             )}
           </div>
 
           {/* STEP 3: Hazırlanıyor */}
-          <div className={`keynote-card ${currentIdx === 2 ? 'active' : currentIdx > 2 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', inline: 'center'})}>
+          <div className={`keynote-card ${currentIdx === 2 ? 'active' : currentIdx > 2 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', block: 'center'})}>
             <div className="keynote-card-icon">{currentIdx > 2 ? '🎀' : '✨'}</div>
             <div className="keynote-card-title">{currentIdx > 2 ? 'Hazırlandı' : 'Tasarım Sürecinde'}</div>
             <div className="keynote-card-desc">Siparişiniz atölyemizde özenle hayat buluyor.</div>
@@ -294,7 +292,7 @@ function TrackerView({ order }: { order: Order }) {
           </div>
 
           {/* STEP 4: Hazır (Gizemli Kutulu) */}
-          <div className={`keynote-card ${currentIdx === 3 ? 'active' : currentIdx > 3 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', inline: 'center'})}>
+          <div className={`keynote-card ${currentIdx === 3 ? 'active' : currentIdx > 3 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', block: 'center'})}>
             <div className="keynote-card-icon">{currentIdx > 3 ? '🎉' : '🎁'}</div>
             <div className="keynote-card-title">{currentIdx > 3 ? 'Ayrıldı' : 'Teslime Hazır'}</div>
             <div className="keynote-card-desc">Tüm hazırlıklar tamamlandı. Bu kusursuzluk sizi bekliyor.</div>
@@ -309,7 +307,7 @@ function TrackerView({ order }: { order: Order }) {
           </div>
 
           {/* STEP 5: Teslim (Bambaşka Son) */}
-          <div className={`keynote-card ${currentIdx === 4 ? 'active' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', inline: 'center'})}>
+          <div className={`keynote-card ${currentIdx === 4 ? 'active' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', block: 'center'})}>
             <div className="keynote-card-icon">🥂</div>
             <div className="keynote-card-title">Kusursuz Bir Son.</div>
             <div className="keynote-card-desc">Siparişiniz başarıyla teslim edildi. En güzel anılarınızda yer almak bizim için bir lükstü.</div>
@@ -317,20 +315,20 @@ function TrackerView({ order }: { order: Order }) {
             {currentIdx === 4 && (
               <div style={{ marginTop: 32, cursor: 'default' }} onClick={e => e.stopPropagation()}>
                 {/* Yorumlar Apple Tarzı */}
-                <div style={{ background: 'rgba(0,0,0,0.4)', borderRadius: 24, padding: 24, textAlign: 'center', border: '1px solid rgba(255,255,255,0.1)', marginBottom: 24 }}>
+                <div style={{ background: '#FFF', borderRadius: 24, padding: 24, textAlign: 'center', border: '1px solid rgba(0,0,0,0.05)', marginBottom: 24, boxShadow: '0 8px 16px rgba(0,0,0,0.02)' }}>
                   <div style={{ fontSize: 32, marginBottom: 12 }}>⭐️</div>
-                  <div style={{ fontSize: 16, fontWeight: 800, color: '#FFF', marginBottom: 8 }}>Google Değerlendirmesi</div>
-                  <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 16 }}>Deneyimlerinizi paylaşarak bize güç verin.</div>
-                  <a href={state.settings.googleReviewUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', background: '#FFF', color: '#000', padding: '12px 24px', borderRadius: 999, fontWeight: 800, textDecoration: 'none', fontSize: 13 }}>
+                  <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--nas-black)', marginBottom: 8 }}>Google Değerlendirmesi</div>
+                  <div style={{ fontSize: 12, color: 'var(--gray-500)', marginBottom: 16 }}>Deneyimlerinizi paylaşarak bize güç verin.</div>
+                  <a href={state.settings.googleReviewUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', background: 'var(--gray-50)', color: '#4285F4', padding: '12px 24px', borderRadius: 999, fontWeight: 800, textDecoration: 'none', fontSize: 13, border: '1px solid rgba(66, 133, 244, 0.2)' }}>
                     Değerlendirme Yap
                   </a>
                 </div>
 
                 {/* Fotoğraf Yükleme Apple Lansman Tarzı */}
-                <div style={{ background: 'linear-gradient(135deg, rgba(201,169,110,0.1), rgba(201,169,110,0.05))', borderRadius: 24, padding: 24, textAlign: 'center', border: '1px solid rgba(201,169,110,0.2)' }}>
+                <div style={{ background: 'linear-gradient(135deg, rgba(201,169,110,0.05), rgba(201,169,110,0.02))', borderRadius: 24, padding: 24, textAlign: 'center', border: '1px solid rgba(201,169,110,0.15)' }}>
                   <div style={{ fontSize: 32, marginBottom: 12 }}>📸</div>
-                  <div style={{ fontSize: 16, fontWeight: 800, color: '#C9A96E', marginBottom: 8 }}>Anı Bekliyoruz</div>
-                  <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', marginBottom: 16 }}>Söz/Nişan töreninizden profesyonel bir kare paylaşmak ister misiniz?</div>
+                  <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--nas-bordeaux)', marginBottom: 8 }}>Anı Bekliyoruz</div>
+                  <div style={{ fontSize: 12, color: 'var(--gray-500)', marginBottom: 16 }}>Söz/Nişan töreninizden profesyonel bir kare paylaşmak ister misiniz?</div>
                   {photoFiles.length > 0 && (
                     <div className="upload-grid" style={{ marginBottom: 16 }}>
                       {photoFiles.map((img, i) => (
@@ -340,7 +338,7 @@ function TrackerView({ order }: { order: Order }) {
                   )}
                   <label style={{ display: 'block' }}>
                     <input type="file" accept="image/*" multiple hidden onChange={addPhoto} />
-                    <span style={{ display: 'inline-block', background: 'transparent', color: '#C9A96E', border: '1px solid #C9A96E', padding: '12px 24px', borderRadius: 999, fontWeight: 800, fontSize: 13, cursor: 'pointer' }}>
+                    <span className="btn-luxury-shimmer" style={{ display: 'inline-block', padding: '12px 24px', borderRadius: 999, color: '#FFF', fontWeight: 800, fontSize: 13, cursor: 'pointer', border: 'none' }}>
                       Fotoğraf Ekle
                     </span>
                   </label>
