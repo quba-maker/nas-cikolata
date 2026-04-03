@@ -212,7 +212,7 @@ function TrackerView({ order }: { order: Order }) {
   }, [currentIdx]);
 
   return (
-    <div className="mobile-wrapper keynote-bg" style={{ minHeight: '100vh', position: 'relative' }}>
+    <div className="mobile-wrapper dashboard-bg" style={{ minHeight: '100vh', position: 'relative', paddingBottom: 120 }}>
       
       {/* BRANDING HEADER */}
       <div style={{ padding: 'var(--space-2xl) var(--space-xl) 0', textAlign: 'center', position: 'relative', zIndex: 10 }}>
