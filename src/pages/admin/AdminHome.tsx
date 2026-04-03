@@ -36,140 +36,176 @@ export default function AdminHome() {
   const greeting = hour < 12 ? 'Günaydın' : hour < 18 ? 'İyi öğleden sonralar' : 'İyi akşamlar';
 
   const recentOrders = [...orders].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 5);
+  
+  // Urgent Deliveries (Bugün veya Yarına Teslim Edilecekler)
+  const urgentDeliveries = orders.filter(o => o.status !== 'teslim' && daysUntil(o.deliveryDate) <= 2)
+    .sort((a, b) => new Date(a.deliveryDate).getTime() - new Date(b.deliveryDate).getTime());
 
   return (
     <div style={{ padding: 'var(--space-md)', paddingBottom: '100px' }}>
-      {/* Greeting Widget */}
-      <div className="dashboard-panel-card" style={{
-        padding: 'var(--space-xl)', marginBottom: 'var(--space-md)',
-        background: '#FFF',
-      }}>
-        <div className="dashboard-inner-header" style={{ marginBottom: 12 }}>
-          {new Date().toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long' })}
+      
+      {/* 1. Header & Quick Add */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-lg)' }}>
+        <div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>
+            {new Date().toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long' })}
+          </div>
+          <h1 style={{ fontSize: 28, fontWeight: 900, color: 'var(--nas-black)', letterSpacing: '-0.04em' }}>
+            {greeting} 👋
+          </h1>
         </div>
-        <h1 style={{ fontSize: 26, fontWeight: 900, color: 'var(--nas-black)', letterSpacing: '-0.04em', marginBottom: 20 }}>
-          {greeting}! 👋
-        </h1>
-        <button
-          className="btn btn-green btn-sm"
-          style={{ width: 'auto', padding: '10px 20px', borderRadius: '999px', fontWeight: 700 }}
-          onClick={() => navigate('/siparis')}
-        >
-          <span style={{ fontSize: 18 }}>+</span> Yeni Sipariş Oluştur
-        </button>
       </div>
 
-      {/* Bento Grid Stats */}
-      <div className="bento-grid" style={{ marginBottom: 'var(--space-xl)' }}>
-        <div className="bento-item bento-small" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Toplam Sipariş</div>
-          <div style={{ fontSize: 32, fontWeight: 900, letterSpacing: '-0.04em', color: 'var(--gray-900)' }}>{orders.length}</div>
+      {/* Insight Balloon */}
+      {activeOrders > 0 && (
+        <div style={{
+          background: urgentDeliveries.length > 0 ? 'linear-gradient(135deg, #FFF1F2 0%, #FFE4E6 100%)' : 'linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%)',
+          border: `1px solid ${urgentDeliveries.length > 0 ? '#FECDD3' : '#BBF7D0'}`,
+          borderRadius: 'var(--radius-xl)', padding: '16px 20px', marginBottom: 'var(--space-md)',
+          display: 'flex', alignItems: 'flex-start', gap: 12
+        }}>
+          <span style={{ fontSize: 24 }}>{urgentDeliveries.length > 0 ? '🚨' : '✨'}</span>
+          <div>
+            <div style={{ fontSize: 14, fontWeight: 800, color: urgentDeliveries.length > 0 ? '#9F1239' : '#166534', marginBottom: 4 }}>
+              {urgentDeliveries.length > 0 ? 'Acil Teslimatlar Var!' : 'Her şey yolunda!'}
+            </div>
+            <div style={{ fontSize: 13, color: urgentDeliveries.length > 0 ? '#BE123C' : '#15803D', lineHeight: 1.4, fontWeight: 500 }}>
+              Şu an sistemde bekleyen {activeOrders} siparişiniz var. 
+              {urgentDeliveries.length > 0 ? ` Bunlardan ${urgentDeliveries.length} tanesinin teslimat tarihi çok yaklaştı.` : ' Sistemi harika yönetiyorsunuz, acil bir durum görünmüyor.'}
+            </div>
+          </div>
         </div>
-        <div className="bento-item bento-small" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+      )}
+
+      {/* 2. Urgent Deliveries List */}
+      {urgentDeliveries.length > 0 && (
+        <div className="dashboard-panel-card" style={{ padding: 'var(--space-md)', marginBottom: 'var(--space-xl)', background: '#FFF', border: '1px solid #FECDD3', boxShadow: '0 8px 24px rgba(225, 29, 72, 0.08)' }}>
+          <div style={{ fontSize: 13, fontWeight: 800, color: '#9F1239', letterSpacing: '0.05em', marginBottom: 12, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span>YAKLAŞAN TESLİMATLAR</span>
+            <span style={{ background: '#E11D48', color: '#FFF', padding: '2px 8px', borderRadius: 10 }}>{urgentDeliveries.length}</span>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {urgentDeliveries.slice(0, 3).map(o => (
+              <div key={o.id} onClick={() => navigate(`/admin/siparisler/${o.id}`)} style={{
+                display: 'flex', alignItems: 'center', gap: 12, padding: 12, background: '#FFF1F2', borderRadius: 'var(--radius-md)', cursor: 'pointer'
+              }}>
+                <div style={{ width: 40, height: 40, borderRadius: 'var(--radius-md)', background: '#FDA4AF', color: '#881337', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 14 }}>
+                  {o.bride.charAt(0)}{o.groom.charAt(0)}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: '#881337' }}>{o.bride} & {o.groom}</div>
+                  <div style={{ fontSize: 12, color: '#E11D48', fontWeight: 500 }}>{daysUntil(o.deliveryDate) <= 0 ? 'Bugün Teslim!' : `Yarın Teslim (${formatDateShort(o.deliveryDate)})`}</div>
+                </div>
+                <div style={{ fontSize: 18 }}>👉</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 3. True Bento Grid for Stats */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12, marginBottom: 'var(--space-xl)' }}>
+        {/* Active Orders Widget */}
+        <div className="dashboard-inner-card" style={{ margin: 0, padding: 20, background: '#FFF', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Aktif Sipariş</div>
-          <div style={{ fontSize: 32, fontWeight: 900, letterSpacing: '-0.04em', color: 'var(--orange-500)' }}>{activeOrders}</div>
+          <div style={{ fontSize: 36, fontWeight: 900, color: 'var(--orange-500)', marginTop: 8, letterSpacing: '-0.04em' }}>{activeOrders}</div>
         </div>
-        <div className="bento-item bento-small" style={{ display: 'flex', flexDirection: 'column', gap: 6, gridColumn: 'span 4' }}>
-          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Toplam Ciro</div>
-          <div style={{ fontSize: 28, fontWeight: 900, letterSpacing: '-0.04em', color: 'var(--nas-bordeaux)' }}>{formatCurrency(totalRevenue)}</div>
+        
+        {/* Total Orders Widget */}
+        <div className="dashboard-inner-card" style={{ margin: 0, padding: 20, background: '#FFF', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Toplam Sipariş</div>
+          <div style={{ fontSize: 36, fontWeight: 900, color: 'var(--gray-900)', marginTop: 8, letterSpacing: '-0.04em' }}>{orders.length}</div>
+        </div>
+
+        {/* Total Revenue Wide Widget */}
+        <div className="dashboard-inner-card" style={{ margin: 0, padding: '24px 20px', background: 'linear-gradient(135deg, #f8f9fa 0%, #FFF 100%)', gridColumn: 'span 2', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'relative', zIndex: 2 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Toplam Ciro</div>
+            <div style={{ fontSize: 40, fontWeight: 900, color: 'var(--nas-bordeaux)', letterSpacing: '-0.04em' }}>{formatCurrency(totalRevenue)}</div>
+            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--green-600)', marginTop: 8, display: 'flex', alignItems: 'center', gap: 4 }}>
+              <span>📈</span> İşler harika gidiyor
+            </div>
+          </div>
+          {/* Decorative background chart overlay */}
+          <div style={{ position: 'absolute', bottom: -10, right: -10, opacity: 0.05, fontSize: 120, pointerEvents: 'none' }}>₺</div>
         </div>
       </div>
 
-      {/* Status pills - Modernized */}
+      {/* 4. Quick Action Circles */}
       <div style={{ marginBottom: 'var(--space-xl)' }}>
-        <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--gray-800)', letterSpacing: '-0.02em', marginBottom: 16 }}>Sipariş Durumları</div>
-        <div className="h-scroll" style={{ margin: '0 -var(--space-md)', padding: '0 var(--space-md)' }}>
-          {STATUS_ORDER.map(s => (
+        <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--gray-800)', letterSpacing: '-0.02em', marginBottom: 16 }}>Hızlı İşlemler</div>
+        <div className="h-scroll" style={{ margin: '0 -var(--space-md)', padding: '0 var(--space-md)', gap: 16 }}>
+          {[
+            { icon: '➕', label: 'Yeni Sipariş', bg: '#DCFCE7', color: '#166534', path: '/siparis' },
+            { icon: '💸', label: 'Masraf Ekle', bg: '#FEF3C7', color: '#B45309', path: '/admin/yonetim/muhasebe' },
+            { icon: '📦', label: 'Ürün Ekle', bg: '#E0E7FF', color: '#3730A3', path: '/admin/yonetim/urunler' },
+            { icon: '⚙️', label: 'Ayarlar', bg: '#F3F4F6', color: '#374151', path: '/admin/yonetim/ayarlar' },
+          ].map(action => (
             <button
-              key={s}
-              onClick={() => navigate('/admin/siparisler')}
-              className="bento-item"
+              key={action.label}
+              onClick={() => navigate(action.path)}
               style={{
-                background: '#fff', border: 'none', padding: '16px', minWidth: 100,
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                cursor: 'pointer'
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+                background: 'none', border: 'none', cursor: 'pointer', minWidth: 76
               }}
             >
-              <div style={{ fontSize: 24, marginBottom: 8, background: 'var(--gray-50)', width: 44, height: 44, borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{STATUS_ICONS[s]}</div>
-              <div style={{ fontSize: 22, fontWeight: 900, color: STATUS_COLORS[s], letterSpacing: '-0.02em' }}>{counts[s]}</div>
-              <div style={{ fontSize: 10, color: 'var(--gray-500)', fontWeight: 700, marginTop: 4 }}>{STATUS_LABELS[s]}</div>
+              <div style={{
+                width: 60, height: 60, borderRadius: '50%', background: action.bg, color: action.color,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24,
+                boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
+              }}>
+                {action.icon}
+              </div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--gray-600)', textAlign: 'center' }}>
+                {action.label}
+              </div>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Quick access Bento */}
-      <div style={{ marginBottom: 'var(--space-xl)' }}>
-        <div className="dashboard-inner-header" style={{ marginBottom: 16 }}>HIZLI ERİŞİM</div>
-        <div className="bento-grid">
-          {[
-            { icon: '📦', label: 'Tüm Siparişler', path: '/admin/siparisler' },
-            { icon: '🛍️', label: 'Ürün Yönetimi', path: '/admin/yonetim/urunler' },
-            { icon: '💰', label: 'Muhasebe Özeti', path: '/admin/yonetim/muhasebe' },
-            { icon: '⚙️', label: 'Sistem Ayarları', path: '/admin/yonetim/ayarlar' },
-          ].map(item => (
-            <button
-              key={item.path}
-              onClick={() => navigate(item.path)}
-              className="dashboard-inner-card"
-              style={{ margin: 0, padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 12, border: '1px solid #E5E7EB', cursor: 'pointer', textAlign: 'left', background: '#FFF' }}
-            >
-              <div style={{ fontSize: 28, background: 'var(--gray-50)', padding: 12, borderRadius: 'var(--radius-xl)' }}>{item.icon}</div>
-              <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--gray-900)' }}>{item.label}</span>
-            </button>
-          ))}
+      {/* 5. Recent orders */}
+      <div className="dashboard-panel-card" style={{ padding: 'var(--space-xl)' }}>
+        <div className="dashboard-inner-header" style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span>SON HAREKETLER</span>
+          <button className="btn btn-ghost btn-sm" style={{ fontWeight: 700, color: 'var(--nas-black)' }} onClick={() => navigate('/admin/siparisler')}>Tümü →</button>
         </div>
-      </div>
-
-      {/* Recent orders */}
-      {recentOrders.length > 0 && (
-        <div className="dashboard-panel-card" style={{ padding: 'var(--space-xl)' }}>
-          <div className="dashboard-inner-header" style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span>SON SİPARİŞLER</span>
-            <button className="btn btn-ghost btn-sm" style={{ fontWeight: 700, color: 'var(--nas-black)' }} onClick={() => navigate('/admin/siparisler')}>Tümü →</button>
-          </div>
+        
+        {recentOrders.length > 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
-            {recentOrders.map(o => {
-              const days = daysUntil(o.deliveryDate);
-              return (
-                <div
-                  key={o.id}
-                  className="dashboard-inner-card"
-                  onClick={() => navigate(`/admin/siparisler/${o.id}`)}
-                  style={{ margin: 0, display: 'flex', alignItems: 'center', padding: '16px', gap: 16, cursor: 'pointer', background: '#FFF', border: '1px solid #E5E7EB' }}
-                >
-                  <div style={{ background: 'var(--gray-100)', width: 44, height: 44, borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: 'var(--gray-600)', fontSize: 14 }}>
-                    {o.bride.charAt(0)}{o.groom.charAt(0)}
+            {recentOrders.map(o => (
+              <div
+                key={o.id}
+                className="dashboard-inner-card"
+                onClick={() => navigate(`/admin/siparisler/${o.id}`)}
+                style={{ margin: 0, display: 'flex', alignItems: 'center', padding: '16px', gap: 16, cursor: 'pointer', background: '#FFF', border: '1px solid #E5E7EB' }}
+              >
+                <div style={{ background: 'var(--gray-100)', width: 44, height: 44, borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: 'var(--gray-600)', fontSize: 14 }}>
+                  {o.bride.charAt(0)}{o.groom.charAt(0)}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--gray-900)', letterSpacing: '-0.01em' }}>{o.bride} & {o.groom}</div>
+                  <div style={{ fontSize: 12, color: 'var(--gray-500)', fontWeight: 500 }}>{o.categoryName || 'Özel Set'}</div>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <div className="badge" style={{ background: 'var(--gray-100)', color: STATUS_COLORS[o.status], marginBottom: 4 }}>
+                    {STATUS_LABELS[o.status]}
                   </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--gray-900)', letterSpacing: '-0.01em' }}>{o.bride} & {o.groom}</div>
-                    <div style={{ fontSize: 12, color: 'var(--gray-500)', fontWeight: 500 }}>{o.categoryName || 'Özel Set'}</div>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <div className="badge" style={{ background: 'var(--gray-100)', color: STATUS_COLORS[o.status], marginBottom: 4 }}>
-                      {STATUS_LABELS[o.status]}
-                    </div>
-                    <div style={{ fontSize: 12, fontWeight: 700 }}>
-                      {formatCurrency(o.totalPrice)}
-                    </div>
+                  <div style={{ fontSize: 12, fontWeight: 700 }}>
+                    {formatCurrency(o.totalPrice)}
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <div style={{ textAlign: 'center', padding: 'var(--space-xl) 0', color: 'var(--gray-400)' }}>
+            <div style={{ fontSize: 32, marginBottom: 8 }}>📭</div>
+            <div style={{ fontSize: 14, fontWeight: 600 }}>Henüz sipariş yok</div>
+          </div>
+        )}
+      </div>
 
-      {orders.length === 0 && (
-        <div className="glass-block" style={{ textAlign: 'center', padding: 'var(--space-3xl)', color: 'var(--gray-400)' }}>
-          <div style={{ fontSize: 64, marginBottom: 16 }}>📭</div>
-          <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--gray-900)' }}>Henüz sipariş yok</div>
-          <div style={{ fontSize: 14, marginTop: 8, fontWeight: 500 }}>Sipariş oluşturma ekranından ilk siparişi ekleyin</div>
-          <button className="btn btn-primary btn-pulse" style={{ marginTop: 24, borderRadius: 'var(--radius-pill)' }} onClick={() => navigate('/siparis')}>
-            Sipariş Oluştur
-          </button>
-        </div>
-      )}
     </div>
   );
 }
