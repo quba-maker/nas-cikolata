@@ -7,39 +7,27 @@ import { formatCurrency as fc, formatCurrency, calcDeposit } from '../data/seedD
 import { openWhatsApp } from '../utils/whatsapp';
 import Confetti from '../components/Confetti';
 
-// ============================================================
-// MYSTERIOUS PHOTO REVEAL COMPONENT
-// ============================================================
-function BlurRevealPhoto({ src }: { src: string }) {
+function KeynoteRevealPhoto({ src }: { src: string }) {
   const [revealed, setRevealed] = useState(false);
-  const [isHolding, setIsHolding] = useState(false);
-  
-  useEffect(() => {
-    let timer: ReturnType<typeof setTimeout>;
-    if (isHolding && !revealed) {
-      timer = setTimeout(() => {
-        setRevealed(true);
-      }, 600); // 600ms hold to unlock
-    }
-    return () => clearTimeout(timer);
-  }, [isHolding, revealed]);
 
   return (
-    <div 
-      className={`mysterious-photo-container ${revealed ? 'revealed' : ''}`}
-      onMouseDown={() => setIsHolding(true)}
-      onMouseUp={() => setIsHolding(false)}
-      onMouseLeave={() => setIsHolding(false)}
-      onTouchStart={() => setIsHolding(true)}
-      onTouchEnd={() => setIsHolding(false)}
-      style={{ marginBottom: 16 }}
-    >
-      <img src={src} className="real-img" alt="" />
-      
-      <div className="mysterious-glass">
-        <div className="mysterious-lock-icon">✨</div>
-        <div className="mysterious-text">Siparişinizden Bir Kare</div>
-        <div className="mysterious-subtext">Büyüyü Bozmak İçin Basılı Tut</div>
+    <div className={`keynote-reveal-box ${revealed ? 'revealed' : ''}`} onClick={() => setRevealed(true)}>
+      <div className="keynote-reveal-inner">
+        {/* Front side of the 3D box */}
+        <div className="keynote-reveal-front">
+          <div style={{ fontSize: 48, marginBottom: 16 }}>✨</div>
+          <div style={{ fontSize: 16, fontWeight: 800, color: '#C9A96E', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+            SÜRPRİZ!
+          </div>
+          <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', marginTop: 8 }}>
+            Fotoğrafı Görmek İçin Dokun
+          </div>
+        </div>
+        
+        {/* Back side containing actual image */}
+        <div className="keynote-reveal-back">
+          <img src={src} alt="Üretim karesi" />
+        </div>
       </div>
     </div>
   );
@@ -213,216 +201,157 @@ function TrackerView({ order }: { order: Order }) {
     });
   };
 
+  // Auto scroll to active keynote card
+  useEffect(() => {
+    const list = document.querySelector('.keynote-carousel');
+    const active = document.querySelector('.keynote-card.active');
+    if (list && active) {
+      setTimeout(() => {
+        // center the active element in the viewport
+        active.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }, 500);
+    }
+  }, [currentIdx]);
+
   return (
-    <div className="mobile-wrapper" style={{ minHeight: '100vh', background: 'var(--nas-cream)' }}>
-      {/* HEADER */}
-      <div style={{
-        background: 'linear-gradient(135deg, var(--nas-bordeaux-3), var(--nas-bordeaux))',
-        padding: 'var(--space-xl) var(--space-lg) var(--space-2xl)',
-      }}>
-        <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center' }}>
-        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.60)', letterSpacing: '0.10em', textTransform: 'uppercase', marginBottom: 8 }}>
-          Merhaba 💕
+    <div className="mobile-wrapper keynote-bg" style={{ minHeight: '100vh', position: 'relative' }}>
+      
+      {/* KEYNOTE HEADER */}
+      <div style={{ padding: 'var(--space-2xl) var(--space-xl) 0', textAlign: 'center', position: 'relative', zIndex: 10 }}>
+        <div style={{ fontSize: 11, color: '#C9A96E', letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 16, fontWeight: 800 }}>
+          Nas Özel Koleksiyon
         </div>
-        <h1 style={{ fontSize: 26, fontWeight: 900, color: '#fff', letterSpacing: '-0.03em', lineHeight: 1.2, marginBottom: 6 }}>
-          {order.bride} & {order.groom}
+        <h1 className="text-shimmer-gold" style={{ fontSize: 36, fontWeight: 900, letterSpacing: '-0.04em', lineHeight: 1.1, marginBottom: 12 }}>
+          Mükemmellik <br />Hazırlanıyor.
         </h1>
-        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.70)' }}>
-          Siparişinizi adım adım izleyebilirsiniz
+        <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.50)', maxWidth: 280, margin: '0 auto' }}>
+          {order.bride} & {order.groom} için sipariş süreci
         </p>
-        <div style={{ marginTop: 16, display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <span style={{ padding: '6px 14px', background: 'rgba(255,255,255,0.15)', borderRadius: 999, fontSize: 13, color: '#fff', border: '1px solid rgba(255,255,255,0.3)' }}>
-            📅 Program: {formatDate(order.eventDate)}
-          </span>
-          <span style={{ padding: '6px 14px', background: 'rgba(255,255,255,0.15)', borderRadius: 999, fontSize: 13, color: '#fff', border: '1px solid rgba(255,255,255,0.3)' }}>
-            🚀 Teslim: {formatDate(order.deliveryDate)}
-          </span>
-        </div>
-        <div style={{ marginTop: 12, fontSize: 12, color: 'rgba(255,255,255,0.50)' }}>
-          Sipariş No: {order.id}
-        </div>
+
+        <div style={{ marginTop: 24, display: 'inline-flex', gap: 16, background: 'rgba(255,255,255,0.05)', borderRadius: 999, padding: '8px 16px', border: '1px solid rgba(255,255,255,0.05)' }}>
+          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.8)' }}><span style={{ color: '#C9A96E', marginRight: 4 }}>Program</span>{formatDate(order.eventDate)}</div>
+          <div style={{ width: 1, background: 'rgba(255,255,255,0.2)' }} />
+          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.8)' }}><span style={{ color: '#C9A96E', marginRight: 4 }}>Teslim</span>{formatDate(order.deliveryDate)}</div>
         </div>
       </div>
 
-      <div style={{ padding: 'var(--space-md)', marginTop: -32, position: 'relative', zIndex: 1 }}>
-        <div style={{ maxWidth: 800, margin: '0 auto' }}>
-        {/* Status Tracker */}
-        <div style={{ padding: 'var(--space-2xl) var(--space-md) var(--space-xl)', background: '#FFF', borderRadius: 32, boxShadow: '0 24px 64px rgba(0,0,0,0.06)' }}>
-          <div className="cinematic-timeline">
-
-            {/* STEP 1: Onay */}
-            <div className={`cinematic-node ${currentIdx > 0 ? 'done' : currentIdx === 0 ? 'active' : ''}`}>
-              <div className="cinematic-icon-box">
-                {currentIdx > 0 ? '✓' : '1'}
-              </div>
-              <div className="cinematic-content">
-                <div style={{ fontSize: 18, fontWeight: 800, color: currentIdx >= 0 ? 'var(--nas-black)' : 'var(--gray-400)', marginBottom: 4 }}>
-                  {currentIdx > 0 ? '✅ Sipariş Onaylandı' : 'Onay Bekleniyor'}
-                </div>
-                <div style={{ fontSize: 14, color: 'var(--gray-500)', lineHeight: 1.5 }}>
-                  {currentIdx === 0
-                    ? 'Siparişiniz incelenip en kısa sürede onaylanacaktır.'
-                    : 'Siparişiniz onaylandı!'}
-                </div>
-              </div>
-            </div>
-
-            {/* STEP 2: Kapora */}
-            <div className={`cinematic-node ${currentIdx > 1 ? 'done' : currentIdx === 1 ? 'active' : ''}`}>
-              <div className="cinematic-icon-box">
-                {currentIdx > 1 ? '✓' : '2'}
-              </div>
-              <div className="cinematic-content">
-                <div style={{ fontSize: 18, fontWeight: 800, color: currentIdx >= 1 ? 'var(--nas-black)' : 'var(--gray-400)', marginBottom: 4 }}>
-                  {currentIdx > 1 ? '✅ Kapora Alındı' : currentIdx === 1 ? 'Kapora Bekleniyor' : 'Kapora'}
-                </div>
-                <div style={{ fontSize: 14, color: 'var(--gray-500)', lineHeight: 1.5 }}>
-                  {currentIdx === 1 && !customerSent && iban && (
-                    <div style={{ marginTop: 12 }}>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gray-700)', marginBottom: 8 }}>
-                        Lütfen aşağıdaki hesaba kapora gönderin:
-                      </div>
-                      <div style={{ background: 'var(--gray-50)', borderRadius: 'var(--radius-lg)', padding: 'var(--space-md)' }}>
-                        <div style={{ fontSize: 12, color: 'var(--gray-500)', marginBottom: 4 }}>{iban.bankName}</div>
-                        <CopyField label="Ad Soyad" value={iban.holderName} />
-                        <CopyField label="IBAN" value={iban.iban} />
-                        <div style={{ marginTop: 12, padding: '10px 14px', background: 'var(--nas-cream)', border: '1px solid var(--gray-200)', borderRadius: 'var(--radius-md)' }}>
-                          <div style={{ fontSize: 12, color: 'var(--gray-600)', marginBottom: 4 }}>Toplam: <strong>{formatCurrency(order.totalPrice)}</strong></div>
-                          <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--nas-bordeaux)' }}>
-                            Kapora (%{Math.round(state.settings.depositRate * 100)}): {formatCurrency(deposit)}
-                          </div>
-                        </div>
-                      </div>
-                      <button
-                        className="btn btn-primary w-full"
-                        style={{ marginTop: 16, padding: '14px', borderRadius: 999 }}
-                        onClick={handleCustomerSentDeposit}
-                      >
-                        💸 Kaporayı Gönderdim
-                      </button>
-                    </div>
-                  )}
-                  {currentIdx === 1 && customerSent && (
-                    <div style={{ marginTop: 12, padding: '12px 16px', background: 'var(--orange-bg)', borderRadius: 'var(--radius-md)', fontSize: 13, color: 'var(--orange-500)', fontWeight: 600 }}>
-                      ⏳ Kapora kontrol ediliyor, onaylandığında bilgilendirileceksiniz.
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* STEP 3: Hazırlanıyor */}
-            <div className={`cinematic-node ${currentIdx > 2 ? 'done' : currentIdx === 2 ? 'active' : ''}`}>
-               <div className="cinematic-icon-box">
-                {currentIdx > 2 ? '✓' : '3'}
-              </div>
-              <div className="cinematic-content">
-                <div style={{ fontSize: 18, fontWeight: 800, color: currentIdx >= 2 ? 'var(--nas-black)' : 'var(--gray-400)', marginBottom: 4 }}>
-                  {currentIdx > 2 ? '✅ Sipariş Hazırlandı' : 'Sipariş Hazırlanıyor'}
-                </div>
-                <div style={{ fontSize: 14, color: 'var(--gray-500)', lineHeight: 1.5 }}>
-                  {currentIdx === 2 && <PrepProgressBar eventDate={order.eventDate} />}
-                </div>
-              </div>
-            </div>
-
-            {/* STEP 4: Hazır */}
-            <div className={`cinematic-node ${currentIdx > 3 ? 'done' : currentIdx === 3 ? 'active' : ''}`}>
-              <div className="cinematic-icon-box">
-                {currentIdx > 3 ? '✓' : '4'}
-              </div>
-              <div className="cinematic-content">
-                <div style={{ fontSize: 18, fontWeight: 800, color: currentIdx >= 3 ? 'var(--nas-black)' : 'var(--gray-400)', marginBottom: 4 }}>
-                  {currentIdx > 3 ? '✅ Teslim Edildi' : currentIdx === 3 ? '🎉 Siparişiniz Hazır!' : 'Siparişiniz Hazırlandı'}
-                </div>
-                <div style={{ fontSize: 14, color: 'var(--gray-500)', lineHeight: 1.5 }}>
-                  {currentIdx === 3 && (
-                    <>
-                      <Confetti active />
-                      <div style={{ marginTop: 8, fontSize: 14, color: 'var(--gray-600)', lineHeight: 1.6 }}>
-                        Siparişinizi özenle hazırladık 🎀<br />
-                        Mesai saatleri içinde veya belirlediğiniz tarihte teslim alabilirsiniz.
-                      </div>
-                      
-                      {/* Mysterious Photo Reveal if photos exist */}
-                      {order.productionPhotos.length > 0 && (
-                        <div style={{ marginTop: 24 }}>
-                           {order.productionPhotos.map((img, i) => (
-                              <BlurRevealPhoto key={i} src={img} />
-                           ))}
-                        </div>
-                      )}
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* STEP 5: Teslim */}
-            <div className={`cinematic-node ${currentIdx === 4 ? 'done' : ''}`}>
-              <div className="cinematic-icon-box">
-                {currentIdx === 4 ? '✓' : '5'}
-              </div>
-              <div className="cinematic-content" style={{ opacity: currentIdx === 4 ? 1 : 0.4 }}>
-                <div style={{ fontSize: 18, fontWeight: 800, color: currentIdx === 4 ? 'var(--green-600)' : 'var(--gray-400)', marginBottom: 4 }}>
-                  {currentIdx === 4 ? '🥳 Siparişiniz Teslim Edildi!' : 'Teslim'}
-                </div>
-                <div style={{ fontSize: 14, color: 'var(--gray-500)', lineHeight: 1.5 }}>
-                  {currentIdx === 4 && (
-                    <div style={{ marginTop: 12 }}>
-                      <p style={{ fontSize: 14, color: 'var(--gray-600)', lineHeight: 1.6, marginBottom: 20 }}>
-                        Programınız için sonsuz mutluluklar dileriz! 💕 En güzel anılarınızı biriktirmeniz dileğiyle.
-                      </p>
-
-                      {/* Premium Program photo upload */}
-                      <div style={{ background: '#F5F5F7', padding: 'var(--space-md)', borderRadius: 24, textAlign: 'center', marginBottom: 24 }}>
-                        <div style={{ fontSize: 32, marginBottom: 8 }}>📸</div>
-                        <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 6, color: 'var(--nas-black)' }}>
-                          Söz/Nişan Anısından Bir Kare?
-                        </div>
-                        <p style={{ fontSize: 13, color: 'var(--gray-500)', marginBottom: 16, lineHeight: 1.4 }}>
-                          Gelecekteki çiftlerimize ilham kaynağı olmanız için programdan bir fotoğraf yollar mısınız?
-                        </p>
-                        
-                        {photoFiles.length > 0 && (
-                          <div className="upload-grid" style={{ marginBottom: 16 }}>
-                            {photoFiles.map((img, i) => (
-                              <img key={i} src={img} alt="" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: 'var(--radius-md)' }} />
-                            ))}
-                          </div>
-                        )}
-                        <label style={{ display: 'block' }}>
-                          <input type="file" accept="image/*" multiple hidden onChange={addPhoto} />
-                          <span className="btn-luxury-shimmer" style={{ display: 'inline-flex', padding: '12px 24px', borderRadius: 999, color: '#FFF', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>Fotoğraf Yükle</span>
-                        </label>
-                      </div>
-
-                      {/* Apple Style Google review */}
-                      <div style={{ padding: 'var(--space-md)', background: '#FFF', border: '1px solid var(--gray-200)', borderRadius: 24, textAlign: 'center', boxShadow: '0 8px 16px rgba(0,0,0,0.03)' }}>
-                        <div style={{ fontSize: 32, marginBottom: 4 }}>⭐</div>
-                        <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 4, letterSpacing: '-0.02em', color: 'var(--nas-black)' }}>Bizi Değerlendirin</div>
-                        <div style={{ fontSize: 13, color: 'var(--gray-500)', marginBottom: 16 }}>Deneyiminiz Google'da yazın.</div>
-                        <a
-                          href={state.settings.googleReviewUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            display: 'inline-block', background: '#F5F5F7', color: '#4285F4', padding: '10px 24px', borderRadius: 999, fontWeight: 700, textDecoration: 'none', fontSize: 14, border: '1px solid rgba(66, 133, 244, 0.2)'
-                          }}
-                        >
-                          Değerlendirme Yaz
-                        </a>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+      {/* KEYNOTE HORIZONTAL PROGRESS CAROUSEL */}
+      <div style={{ marginTop: 24, position: 'relative', zIndex: 10 }}>
+        <div className="keynote-carousel">
+          
+          {/* STEP 1: Onay */}
+          <div className={`keynote-card ${currentIdx === 0 ? 'active' : currentIdx > 0 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', inline: 'center'})}>
+            <div className="keynote-card-icon">{currentIdx > 0 ? '✅' : '📨'}</div>
+            <div className="keynote-card-title">{currentIdx > 0 ? 'Onaylandı' : 'Onay Bekleniyor'}</div>
+            <div className="keynote-card-desc">Sipariş alındı. Detaylar inceleniyor, kısa süre içerisinde işleme alınacak.</div>
           </div>
+
+          {/* STEP 2: Kapora */}
+          <div className={`keynote-card ${currentIdx === 1 ? 'active' : currentIdx > 1 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', inline: 'center'})}>
+            <div className="keynote-card-icon">{currentIdx > 1 ? '💸' : '💎'}</div>
+            <div className="keynote-card-title">{currentIdx > 1 ? 'Kapora Alındı' : currentIdx === 1 ? 'Ödeme Bekleniyor' : 'Kapora'}</div>
+            <div className="keynote-card-desc">
+              {currentIdx > 1 
+                ? 'Ödemeniz başarıyla tarafımıza ulaştı.'
+                : 'Siparişin üretime girmesi için kapora işleminin tamamlanması gerekmektedir.'}
+            </div>
+            {currentIdx === 1 && !customerSent && iban && (
+              <div style={{ marginTop: 24, padding: '16px', background: 'rgba(0,0,0,0.3)', borderRadius: 24, border: '1px solid rgba(255,255,255,0.1)' }}>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>Ödeme Bilgileri</div>
+                <CopyField label="Ad Soyad" value={iban.holderName} />
+                <CopyField label="IBAN" value={iban.iban} />
+                <div style={{ marginTop: 16, padding: '12px', background: 'rgba(201,169,110,0.1)', borderRadius: 16, textAlign: 'center' }}>
+                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)' }}>Toplam: {formatCurrency(order.totalPrice)}</div>
+                  <div style={{ fontSize: 16, fontWeight: 800, color: '#C9A96E', marginTop: 4 }}>Kapora: {formatCurrency(deposit)}</div>
+                </div>
+                <button
+                  className="btn-luxury-shimmer"
+                  onClick={(e) => { e.stopPropagation(); handleCustomerSentDeposit(); }}
+                  style={{ width: '100%', marginTop: 16, padding: 16, borderRadius: 999, border: 'none', color: '#FFF', fontWeight: 800, cursor: 'pointer' }}
+                >
+                  Gönderdim
+                </button>
+              </div>
+            )}
+            {currentIdx === 1 && customerSent && (
+              <div style={{ marginTop: 20, padding: 16, background: 'rgba(255,255,255,0.05)', borderRadius: 16, textAlign: 'center', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <span className="animate-pulse" style={{ display: 'inline-block', fontSize: 24, marginBottom: 8 }}>⏳</span>
+                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)' }}>Dekont inceleniyor</div>
+              </div>
+            )}
+          </div>
+
+          {/* STEP 3: Hazırlanıyor */}
+          <div className={`keynote-card ${currentIdx === 2 ? 'active' : currentIdx > 2 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', inline: 'center'})}>
+            <div className="keynote-card-icon">{currentIdx > 2 ? '🎀' : '✨'}</div>
+            <div className="keynote-card-title">{currentIdx > 2 ? 'Hazırlandı' : 'Tasarım Sürecinde'}</div>
+            <div className="keynote-card-desc">Siparişiniz atölyemizde özenle hayat buluyor.</div>
+            {currentIdx === 2 && (
+              <div style={{ marginTop: 24 }}>
+                <PrepProgressBar eventDate={order.eventDate} />
+              </div>
+            )}
+          </div>
+
+          {/* STEP 4: Hazır (Gizemli Kutulu) */}
+          <div className={`keynote-card ${currentIdx === 3 ? 'active' : currentIdx > 3 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', inline: 'center'})}>
+            <div className="keynote-card-icon">{currentIdx > 3 ? '🎉' : '🎁'}</div>
+            <div className="keynote-card-title">{currentIdx > 3 ? 'Ayrıldı' : 'Teslime Hazır'}</div>
+            <div className="keynote-card-desc">Tüm hazırlıklar tamamlandı. Bu kusursuzluk sizi bekliyor.</div>
+            {currentIdx === 3 && (
+              <div style={{ marginTop: 24 }}>
+                <Confetti active />
+                {order.productionPhotos.map((img, i) => (
+                  <KeynoteRevealPhoto key={i} src={img} />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* STEP 5: Teslim (Bambaşka Son) */}
+          <div className={`keynote-card ${currentIdx === 4 ? 'active' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', inline: 'center'})}>
+            <div className="keynote-card-icon">🥂</div>
+            <div className="keynote-card-title">Kusursuz Bir Son.</div>
+            <div className="keynote-card-desc">Siparişiniz başarıyla teslim edildi. En güzel anılarınızda yer almak bizim için bir lükstü.</div>
+            
+            {currentIdx === 4 && (
+              <div style={{ marginTop: 32, cursor: 'default' }} onClick={e => e.stopPropagation()}>
+                {/* Yorumlar Apple Tarzı */}
+                <div style={{ background: 'rgba(0,0,0,0.4)', borderRadius: 24, padding: 24, textAlign: 'center', border: '1px solid rgba(255,255,255,0.1)', marginBottom: 24 }}>
+                  <div style={{ fontSize: 32, marginBottom: 12 }}>⭐️</div>
+                  <div style={{ fontSize: 16, fontWeight: 800, color: '#FFF', marginBottom: 8 }}>Google Değerlendirmesi</div>
+                  <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 16 }}>Deneyimlerinizi paylaşarak bize güç verin.</div>
+                  <a href={state.settings.googleReviewUrl} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', background: '#FFF', color: '#000', padding: '12px 24px', borderRadius: 999, fontWeight: 800, textDecoration: 'none', fontSize: 13 }}>
+                    Değerlendirme Yap
+                  </a>
+                </div>
+
+                {/* Fotoğraf Yükleme Apple Lansman Tarzı */}
+                <div style={{ background: 'linear-gradient(135deg, rgba(201,169,110,0.1), rgba(201,169,110,0.05))', borderRadius: 24, padding: 24, textAlign: 'center', border: '1px solid rgba(201,169,110,0.2)' }}>
+                  <div style={{ fontSize: 32, marginBottom: 12 }}>📸</div>
+                  <div style={{ fontSize: 16, fontWeight: 800, color: '#C9A96E', marginBottom: 8 }}>Anı Bekliyoruz</div>
+                  <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', marginBottom: 16 }}>Söz/Nişan töreninizden profesyonel bir kare paylaşmak ister misiniz?</div>
+                  {photoFiles.length > 0 && (
+                    <div className="upload-grid" style={{ marginBottom: 16 }}>
+                      {photoFiles.map((img, i) => (
+                        <img key={i} src={img} alt="" style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: 'var(--radius-md)' }} />
+                      ))}
+                    </div>
+                  )}
+                  <label style={{ display: 'block' }}>
+                    <input type="file" accept="image/*" multiple hidden onChange={addPhoto} />
+                    <span style={{ display: 'inline-block', background: 'transparent', color: '#C9A96E', border: '1px solid #C9A96E', padding: '12px 24px', borderRadius: 999, fontWeight: 800, fontSize: 13, cursor: 'pointer' }}>
+                      Fotoğraf Ekle
+                    </span>
+                  </label>
+                </div>
+              </div>
+            )}
+          </div>
+
         </div>
       </div>
-      </div>
-
+      
       {/* Fixed bottom */}
       <div className="price-bar" style={{ gap: 'var(--space-sm)' }}>
         <a
@@ -499,3 +428,4 @@ export default function OrderTracking() {
   if (!order) return <TrackingLogin onLogin={handleLogin} error={error} />;
   return <TrackerView order={order} />;
 }
+
