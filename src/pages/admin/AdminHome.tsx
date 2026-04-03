@@ -117,17 +117,26 @@ export default function AdminHome() {
           <div style={{ fontSize: 36, fontWeight: 900, color: 'var(--gray-900)', marginTop: 8, letterSpacing: '-0.04em' }}>{orders.length}</div>
         </div>
 
-        {/* Total Revenue Wide Widget */}
-        <div className="dashboard-inner-card" style={{ margin: 0, padding: '24px 20px', background: 'linear-gradient(135deg, #f8f9fa 0%, #FFF 100%)', gridColumn: 'span 2', position: 'relative', overflow: 'hidden' }}>
-          <div style={{ position: 'relative', zIndex: 2 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Toplam Ciro</div>
-            <div style={{ fontSize: 40, fontWeight: 900, color: 'var(--nas-bordeaux)', letterSpacing: '-0.04em' }}>{formatCurrency(totalRevenue)}</div>
-            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--green-600)', marginTop: 8, display: 'flex', alignItems: 'center', gap: 4 }}>
-              <span>📈</span> İşler harika gidiyor
+        {/* Atölye Durumu (Workload Kanban Widget) */}
+        <div className="dashboard-inner-card" style={{ margin: 0, padding: '24px 16px', background: 'linear-gradient(135deg, #F9FAFB 0%, #FFF 100%)', gridColumn: 'span 2' }}>
+          <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--gray-500)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 16 }}>Atölye Bekleyen İşler</div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 22, marginBottom: 4 }}>⏳</div>
+              <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--gray-700)', letterSpacing: '-0.04em' }}>{counts['onay'] + counts['kapora']}</div>
+              <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--gray-500)' }}>YENİ / ONAY</div>
+            </div>
+            <div style={{ textAlign: 'center', borderLeft: '1px solid var(--gray-200)', borderRight: '1px solid var(--gray-200)' }}>
+              <div style={{ fontSize: 22, marginBottom: 4 }}>🔧</div>
+              <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--blue-600)', letterSpacing: '-0.04em' }}>{counts['hazirlaniyor']}</div>
+              <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--gray-500)' }}>YAPIMDA</div>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 22, marginBottom: 4 }}>✅</div>
+              <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--green-600)', letterSpacing: '-0.04em' }}>{counts['hazir']}</div>
+              <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--gray-500)' }}>ÇIKIŞA HAZIR</div>
             </div>
           </div>
-          {/* Decorative background chart overlay */}
-          <div style={{ position: 'absolute', bottom: -10, right: -10, opacity: 0.05, fontSize: 120, pointerEvents: 'none' }}>₺</div>
         </div>
       </div>
 
