@@ -2269,3 +2269,184 @@ h1, h2, h3, h4, h5, h6, .modal-title, .title, .hero-title, .section-title {
 .catalog-grid-responsive .product-card {
   width: 100% !important;
 }
+
+/* ============================================================
+   APPLE ADMIN UI OVERHAULS (Segmented Controls, Timeline, Modals)
+   ============================================================ */
+
+/* Segmented Control (Filter Tabs) */
+.segmented-control {
+  display: flex;
+  background: var(--gray-100);
+  padding: 4px;
+  border-radius: var(--radius-lg);
+  overflow-x: auto;
+  gap: 4px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.segmented-control::-webkit-scrollbar { display: none; }
+
+.segmented-chip {
+  padding: 8px 16px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-600);
+  background: transparent;
+  border: none;
+  border-radius: calc(var(--radius-lg) - 4px);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-base);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.segmented-chip.active {
+  background: #fff;
+  color: var(--gray-900);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+}
+.segmented-chip__count {
+  background: var(--gray-200);
+  color: var(--gray-700);
+  padding: 2px 6px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 800;
+}
+.segmented-chip.active .segmented-chip__count {
+  background: var(--nas-rose-light);
+  color: var(--nas-bordeaux);
+}
+
+/* Apple Spotlight Search Bar */
+.apple-search-bar {
+  display: flex;
+  align-items: center;
+  background: var(--gray-100);
+  border-radius: var(--radius-lg);
+  padding: 10px 16px;
+  transition: all var(--transition-base);
+  border: 1.5px solid transparent;
+}
+.apple-search-bar:focus-within {
+  background: #fff;
+  border-color: rgba(107,29,58, 0.2);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04), 0 0 0 4px rgba(107,29,58,0.05);
+}
+.apple-search-bar input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  color: var(--gray-900);
+  margin-left: 10px;
+}
+.apple-search-bar input::placeholder { color: var(--gray-500); }
+
+/* Timeline Status Tracker (Vertical Apple style) */
+.apple-timeline {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-left: 20px;
+}
+.apple-timeline::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  bottom: 0;
+  left: 27px;
+  width: 2px;
+  background: var(--gray-200);
+  z-index: 0;
+}
+.apple-timeline-item {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 20px;
+  padding-bottom: 32px;
+}
+.apple-timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+.timeline-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--gray-200);
+  border: 4px solid #fff;
+  box-shadow: 0 0 0 1px var(--gray-200);
+  margin-top: 4px;
+  flex-shrink: 0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.timeline-dot.done {
+  background: var(--green-500);
+  box-shadow: 0 0 0 1px var(--green-500);
+}
+.timeline-dot.active {
+  background: var(--nas-bordeaux);
+  box-shadow: 0 0 0 1px var(--nas-bordeaux);
+  animation: pulseGlow 2s infinite;
+}
+
+.timeline-content {
+  flex: 1;
+  padding-top: 1px;
+}
+.timeline-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gray-500);
+  transition: color 0.3s ease;
+}
+.timeline-title.done { color: var(--gray-900); }
+.timeline-title.active { color: var(--nas-bordeaux); font-weight: 800; font-size: 16px; letter-spacing: -0.01em; }
+
+/* Shimmer Button */
+@keyframes shimmerWave {
+  100% { transform: translateX(100%); }
+}
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+  transform: translateX(-100%);
+  animation: shimmerWave 2.5s infinite;
+}
+
+/* iOS Bottom Sheet Modal */
+.ios-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fadeIn var(--transition-base) ease;
+}
+.ios-modal-sheet {
+  background: #fff;
+  border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  padding-bottom: env(safe-area-inset-bottom);
+  overflow-y: auto;
+  animation: slideUp var(--transition-spring) forwards;
+}

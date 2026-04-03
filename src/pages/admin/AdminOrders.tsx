@@ -41,34 +41,37 @@ function OrderList() {
           <h1 style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.03em' }}>Siparişler</h1>
           <button className="btn btn-primary btn-sm" onClick={() => navigate('/siparis')}>+ Yeni</button>
         </div>
-        <input
-          className="input-field"
-          placeholder="🔍 İsim, telefon veya sipariş kodu ara..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          style={{ marginBottom: 8 }}
-        />
+        <div className="apple-search-bar" style={{ marginBottom: 8 }}>
+          <span style={{ fontSize: 18, color: 'var(--gray-400)' }}>🔍</span>
+          <input
+            placeholder="İsim, telefon veya sipariş kodu ara..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+        </div>
       </div>
 
       {/* Status filter */}
-      <div className="filter-scroll">
-        <button
-          className={`filter-chip ${filterStatus === 'all' ? 'active' : ''}`}
-          onClick={() => setFilterStatus('all')}
-        >
-          Tümü
-          <span className="filter-chip__count">{state.orders.length}</span>
-        </button>
-        {ALL_STATUSES.map(s => (
+      <div style={{ padding: '0 var(--space-md)' }}>
+        <div className="segmented-control">
           <button
-            key={s}
-            className={`filter-chip ${filterStatus === s ? 'active' : ''}`}
-            onClick={() => setFilterStatus(s)}
+            className={`segmented-chip ${filterStatus === 'all' ? 'active' : ''}`}
+            onClick={() => setFilterStatus('all')}
           >
-            {STATUS_LABELS[s]}
-            <span className="filter-chip__count">{counts[s]}</span>
+            Tümü
+            <span className="segmented-chip__count">{state.orders.length}</span>
           </button>
-        ))}
+          {ALL_STATUSES.map(s => (
+            <button
+              key={s}
+              className={`segmented-chip ${filterStatus === s ? 'active' : ''}`}
+              onClick={() => setFilterStatus(s)}
+            >
+              {STATUS_LABELS[s]}
+              <span className="segmented-chip__count">{counts[s]}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Order cards */}
@@ -227,21 +230,16 @@ function OrderDetail() {
         <div className="glass-block" style={{ padding: 'var(--space-lg)', background: '#fff' }}>
           <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--gray-700)', marginBottom: 'var(--space-md)' }}>Sipariş Süreci</div>
 
-          <div className="order-tracker">
+          <div className="apple-timeline">
             {/* 1. ONAY */}
-            <div className="tracker-item">
-              <div className="tracker-left">
-                <div className={`tracker-dot ${currentIdx > 0 ? 'done' : currentIdx === 0 ? 'active' : ''}`}>
-                  {currentIdx > 0 ? '✓' : '1'}
-                </div>
-                <div className={`tracker-line ${currentIdx > 0 ? 'done' : ''}`} />
-              </div>
-              <div className="tracker-content">
-                <div className={`tracker-title ${currentIdx === 0 ? 'active' : currentIdx > 0 ? 'done' : ''}`}>Onay Bekliyor</div>
+            <div className="apple-timeline-item">
+              <div className={`timeline-dot ${currentIdx > 0 ? 'done' : currentIdx === 0 ? 'active' : ''}`} />
+              <div className="timeline-content">
+                <div className={`timeline-title ${currentIdx === 0 ? 'active' : currentIdx > 0 ? 'done' : ''}`}>Onay Bekliyor</div>
                 {currentIdx === 0 && (
                   <div style={{ marginTop: 10 }}>
                     <button
-                      className="btn btn-primary"
+                      className="btn btn-primary btn-shimmer"
                       onClick={() => {
                         updateStatus('kapora');
                         dispatch({ type: 'UPDATE_ORDER', id: order.id, updates: { customerNotifiedDeposit: true } });
@@ -255,14 +253,9 @@ function OrderDetail() {
             </div>
 
             {/* 2. KAPORA */}
-            <div className="tracker-item">
-              <div className="tracker-left">
-                <div className={`tracker-dot ${currentIdx > 1 ? 'done' : currentIdx === 1 ? 'active' : ''}`}>
-                  {currentIdx > 1 ? '✓' : '2'}
-                </div>
-                <div className={`tracker-line ${currentIdx > 1 ? 'done' : ''}`} />
-              </div>
-              <div className="tracker-content">
+            <div className="apple-timeline-item">
+              <div className={`timeline-dot ${currentIdx > 1 ? 'done' : currentIdx === 1 ? 'active' : ''}`} />
+              <div className="timeline-content">
                 <div className={`tracker-title ${currentIdx === 1 ? 'active' : currentIdx > 1 ? 'done' : ''}`}>
                   {currentIdx > 1 ? 'Kapora Alındı' : 'Kapora'}
                 </div>
@@ -275,7 +268,7 @@ function OrderDetail() {
                       </div>
                     )}
                     <button
-                      className="btn btn-green"
+                      className="btn btn-green btn-shimmer"
                       onClick={() => {
                         if (ibans.length > 1) setIbanDialogOpen(true);
                         else {
@@ -306,14 +299,9 @@ function OrderDetail() {
             </div>
 
             {/* 3. HAZIRLANIYOR */}
-            <div className="tracker-item">
-              <div className="tracker-left">
-                <div className={`tracker-dot ${currentIdx > 2 ? 'done' : currentIdx === 2 ? 'active' : ''}`}>
-                  {currentIdx > 2 ? '✓' : '3'}
-                </div>
-                <div className={`tracker-line ${currentIdx > 2 ? 'done' : ''}`} />
-              </div>
-              <div className="tracker-content">
+            <div className="apple-timeline-item">
+              <div className={`timeline-dot ${currentIdx > 2 ? 'done' : currentIdx === 2 ? 'active' : ''}`} />
+              <div className="timeline-content">
                 <div className={`tracker-title ${currentIdx === 2 ? 'active' : currentIdx > 2 ? 'done' : ''}`}>Hazırlanıyor</div>
                 {currentIdx === 2 && (
                   <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -371,19 +359,14 @@ function OrderDetail() {
             </div>
 
             {/* 4. HAZIR */}
-            <div className="tracker-item">
-              <div className="tracker-left">
-                <div className={`tracker-dot ${currentIdx > 3 ? 'done' : currentIdx === 3 ? 'active' : ''}`}>
-                  {currentIdx > 3 ? '✓' : '4'}
-                </div>
-                <div className={`tracker-line ${currentIdx > 3 ? 'done' : ''}`} />
-              </div>
-              <div className="tracker-content">
+            <div className="apple-timeline-item">
+              <div className={`timeline-dot ${currentIdx > 3 ? 'done' : currentIdx === 3 ? 'active' : ''}`} />
+              <div className="timeline-content">
                 <div className={`tracker-title ${currentIdx === 3 ? 'active' : currentIdx > 3 ? 'done' : ''}`}>Hazır</div>
                 {currentIdx === 3 && (
                   <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
                     <button
-                      className="btn btn-green"
+                      className="btn btn-green btn-shimmer"
                       onClick={() => openWhatsApp(`90${order.phone}`, getTemplate('tpl_hazir'))}
                     >
                       💬 Müşteriye Bilgi Ver (WhatsApp)
@@ -397,20 +380,16 @@ function OrderDetail() {
             </div>
 
             {/* 5. TESLİM */}
-            <div className="tracker-item">
-              <div className="tracker-left">
-                <div className={`tracker-dot ${currentIdx === 4 ? 'done' : ''}`}>
-                  {currentIdx === 4 ? '✓' : '5'}
-                </div>
-              </div>
-              <div className="tracker-content last">
+            <div className="apple-timeline-item">
+              <div className={`timeline-dot ${currentIdx === 4 ? 'done' : ''}`} />
+              <div className="timeline-content last">
                 <div className={`tracker-title ${currentIdx === 4 ? 'done' : ''}`}>
                   {currentIdx === 4 ? '✅ Teslim Edildi!' : 'Teslim'}
                 </div>
                 {currentIdx === 4 && (
                   <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
                     <button
-                      className="btn btn-green btn-sm"
+                      className="btn btn-green btn-sm btn-shimmer"
                       onClick={() => openWhatsApp(`90${order.phone}`, getTemplate('tpl_teslim_fotografi'))}
                     >
                       📸 Program Fotoğrafı İste (WhatsApp)
@@ -507,8 +486,9 @@ function OrderDetail() {
 
       {/* IBAN Select Dialog */}
       {ibanDialogOpen && (
-        <div className="modal-overlay center animate-fade-in" onClick={() => setIbanDialogOpen(false)}>
-          <div className="modal-dialog animate-scale-in" onClick={e => e.stopPropagation()}>
+        <div className="ios-modal-overlay" onClick={() => setIbanDialogOpen(false)}>
+          <div className="ios-modal-sheet" onClick={e => e.stopPropagation()}>
+            <div className="modal-handle" />
             <div className="modal-header">
               <span className="modal-title">IBAN Seçin</span>
               <button className="btn btn-icon btn-secondary" onClick={() => setIbanDialogOpen(false)}>✕</button>
