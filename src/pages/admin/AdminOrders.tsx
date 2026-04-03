@@ -78,23 +78,23 @@ function OrderList() {
       {/* Order cards */}
       <div style={{ padding: '0 var(--space-md)', display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)', marginTop: 16 }}>
         {filtered.length === 0 && (
-          <div className="glass-block" style={{ textAlign: 'center', padding: 'var(--space-3xl)', color: 'var(--gray-400)' }}>
+          <div className="dashboard-panel-card" style={{ textAlign: 'center', padding: 'var(--space-3xl)', color: 'var(--gray-400)' }}>
             <div style={{ fontSize: 64, marginBottom: 16 }}>📭</div>
             <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--gray-900)' }}>Sipariş bulunamadı</div>
           </div>
         )}
-        <div className="glass-block" style={{ background: '#fff', padding: 'var(--space-xs)' }}>
+        <div className="dashboard-panel-card" style={{ padding: 'var(--space-md)' }}>
           {filtered.map((o, idx) => {
             const days = daysUntil(o.deliveryDate);
             return (
               <div
                 key={o.id}
-                className="glass-list-item"
+                className="dashboard-inner-card"
                 onClick={() => navigate(`/admin/siparisler/${o.id}`)}
                 style={{
                   display: 'flex', alignItems: 'center', padding: '16px', gap: 16, cursor: 'pointer',
-                  border: 'none', borderBottom: idx < filtered.length - 1 ? '1px solid var(--gray-100)' : 'none',
-                  borderRadius: 0, margin: 0, background: 'transparent', boxShadow: 'none'
+                  border: '1px solid #E5E7EB',
+                  margin: 0, marginBottom: 'var(--space-sm)', background: '#FFF'
                 }}
               >
                 <div style={{ background: 'var(--gray-100)', minWidth: 44, height: 44, borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: 'var(--gray-600)', fontSize: 14 }}>
@@ -200,25 +200,26 @@ function OrderDetail() {
     <div style={{ paddingBottom: 120 }}>
       {/* Header */}
       <div style={{
-        background: 'linear-gradient(135deg, var(--nas-bordeaux-3), var(--nas-bordeaux))',
-        padding: 'var(--space-lg)',
+        background: '#FFF',
+        padding: 'var(--space-xl)', paddingBottom: 'var(--space-md)',
+        borderBottom: '1px solid var(--gray-200)',
       }}>
-        <button className="btn btn-sm" style={{ background: 'rgba(255,255,255,0.2)', color: '#fff', marginBottom: 12, border: 'none' }}
+        <button className="btn btn-sm" style={{ background: 'var(--gray-100)', color: 'var(--nas-black)', marginBottom: 12, border: 'none', fontWeight: 700 }}
           onClick={() => navigate('/admin/siparisler')}>
           ← Siparişler
         </button>
         <div className="flex items-center justify-between">
           <div>
-            <h1 style={{ fontSize: 22, fontWeight: 900, color: '#fff', letterSpacing: '-0.03em' }}>
+            <h1 style={{ fontSize: 24, fontWeight: 900, color: 'var(--nas-black)', letterSpacing: '-0.03em' }}>
               {order.bride} & {order.groom}
             </h1>
-            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)', marginTop: 4 }}>
+            <div style={{ fontSize: 13, color: 'var(--gray-500)', marginTop: 4, fontWeight: 500 }}>
               #{order.id} · 📅 {formatDate(order.eventDate)} · 🚀 {formatDate(order.deliveryDate)}
             </div>
           </div>
           <span style={{
             padding: '6px 14px', borderRadius: 999, fontSize: 12, fontWeight: 700,
-            background: 'rgba(255,255,255,0.15)', color: '#fff', border: '1.5px solid rgba(255,255,255,0.3)',
+            background: 'var(--gray-100)', color: STATUS_COLORS[order.status]
           }}>
             {STATUS_LABELS[order.status]}
           </span>
@@ -228,8 +229,8 @@ function OrderDetail() {
       <div style={{ padding: 'var(--space-md)', display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
 
         {/* PROCESS TRACKER — Interactive */}
-        <div className="glass-block" style={{ padding: 'var(--space-lg)', background: '#fff' }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--gray-700)', marginBottom: 'var(--space-md)' }}>Sipariş Süreci</div>
+        <div className="dashboard-panel-card" style={{ padding: 'var(--space-xl)', background: '#fff' }}>
+          <div className="dashboard-inner-header" style={{ marginBottom: 'var(--space-md)' }}>SİPARİŞ SÜRECİ</div>
 
           <div className="apple-timeline">
             {/* 1. ONAY */}
@@ -409,8 +410,8 @@ function OrderDetail() {
         </div>
 
         {/* ATÖLYE SECTION */}
-        <div className="glass-block" style={{ padding: 'var(--space-lg)', background: '#fff' }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--gray-700)', marginBottom: 'var(--space-md)' }}>🏭 Atölye</div>
+        <div className="dashboard-panel-card" style={{ padding: 'var(--space-xl)', background: '#fff' }}>
+          <div className="dashboard-inner-header" style={{ marginBottom: 'var(--space-md)' }}>ATÖLYE</div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-md)' }}>
             {/* Buket / Set */}
             <div
@@ -458,8 +459,8 @@ function OrderDetail() {
         </div>
 
         {/* ORDER DETAILS */}
-        <div className="glass-block" style={{ padding: 'var(--space-lg)', background: '#fff' }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--gray-700)', marginBottom: 'var(--space-md)' }}>Sipariş Detayları</div>
+        <div className="dashboard-panel-card" style={{ padding: 'var(--space-xl)', background: '#fff' }}>
+          <div className="dashboard-inner-header" style={{ marginBottom: 'var(--space-md)' }}>SİPARİŞ DETAYLARI</div>
           <div className="summary-section" style={{ margin: 0 }}>
             {[
               ['Sipariş No', order.id],

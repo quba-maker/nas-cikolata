@@ -40,19 +40,19 @@ export default function AdminHome() {
   return (
     <div style={{ padding: 'var(--space-md)', paddingBottom: '100px' }}>
       {/* Greeting Widget */}
-      <div className="glass-block" style={{
+      <div className="dashboard-panel-card" style={{
         padding: 'var(--space-xl)', marginBottom: 'var(--space-md)',
-        background: 'linear-gradient(135deg, rgba(107,29,58,0.9), rgba(139,42,78,0.85))',
+        background: '#FFF',
       }}>
-        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', paddingBottom: 6, fontWeight: 500 }}>
+        <div className="dashboard-inner-header" style={{ marginBottom: 12 }}>
           {new Date().toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long' })}
         </div>
-        <h1 style={{ fontSize: 26, fontWeight: 900, color: '#fff', letterSpacing: '-0.04em', marginBottom: 20 }}>
+        <h1 style={{ fontSize: 26, fontWeight: 900, color: 'var(--nas-black)', letterSpacing: '-0.04em', marginBottom: 20 }}>
           {greeting}! 👋
         </h1>
         <button
-          className="btn btn-white btn-sm"
-          style={{ width: 'auto', padding: '10px 20px', borderRadius: 'var(--radius-pill)', fontWeight: 700 }}
+          className="btn btn-green btn-sm"
+          style={{ width: 'auto', padding: '10px 20px', borderRadius: '999px', fontWeight: 700 }}
           onClick={() => navigate('/siparis')}
         >
           <span style={{ fontSize: 18 }}>+</span> Yeni Sipariş Oluştur
@@ -100,7 +100,7 @@ export default function AdminHome() {
 
       {/* Quick access Bento */}
       <div style={{ marginBottom: 'var(--space-xl)' }}>
-        <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--gray-800)', letterSpacing: '-0.02em', marginBottom: 16 }}>Hızlı Erişim</div>
+        <div className="dashboard-inner-header" style={{ marginBottom: 16 }}>HIZLI ERİŞİM</div>
         <div className="bento-grid">
           {[
             { icon: '📦', label: 'Tüm Siparişler', path: '/admin/siparisler' },
@@ -111,8 +111,8 @@ export default function AdminHome() {
             <button
               key={item.path}
               onClick={() => navigate(item.path)}
-              className="bento-item bento-medium"
-              style={{ padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 12, border: 'none', cursor: 'pointer', textAlign: 'left' }}
+              className="dashboard-inner-card"
+              style={{ margin: 0, padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 12, border: '1px solid #E5E7EB', cursor: 'pointer', textAlign: 'left', background: '#FFF' }}
             >
               <div style={{ fontSize: 28, background: 'var(--gray-50)', padding: 12, borderRadius: 'var(--radius-xl)' }}>{item.icon}</div>
               <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--gray-900)' }}>{item.label}</span>
@@ -123,10 +123,10 @@ export default function AdminHome() {
 
       {/* Recent orders */}
       {recentOrders.length > 0 && (
-        <div className="glass-block" style={{ padding: 'var(--space-md)', background: '#fff' }}>
-          <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--gray-800)', letterSpacing: '-0.02em', marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span>Son Siparişler</span>
-            <button className="btn btn-ghost btn-sm" style={{ fontWeight: 700 }} onClick={() => navigate('/admin/siparisler')}>Tümü</button>
+        <div className="dashboard-panel-card" style={{ padding: 'var(--space-xl)' }}>
+          <div className="dashboard-inner-header" style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>SON SİPARİŞLER</span>
+            <button className="btn btn-ghost btn-sm" style={{ fontWeight: 700, color: 'var(--nas-black)' }} onClick={() => navigate('/admin/siparisler')}>Tümü →</button>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
             {recentOrders.map(o => {
@@ -134,9 +134,9 @@ export default function AdminHome() {
               return (
                 <div
                   key={o.id}
-                  className="glass-list-item"
+                  className="dashboard-inner-card"
                   onClick={() => navigate(`/admin/siparisler/${o.id}`)}
-                  style={{ display: 'flex', alignItems: 'center', padding: '16px', gap: 16, cursor: 'pointer' }}
+                  style={{ margin: 0, display: 'flex', alignItems: 'center', padding: '16px', gap: 16, cursor: 'pointer', background: '#FFF', border: '1px solid #E5E7EB' }}
                 >
                   <div style={{ background: 'var(--gray-100)', width: 44, height: 44, borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: 'var(--gray-600)', fontSize: 14 }}>
                     {o.bride.charAt(0)}{o.groom.charAt(0)}

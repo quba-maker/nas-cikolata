@@ -322,18 +322,17 @@ export default function AdminProducts() {
 
       {/* Product list */}
       {products.length === 0 && (
-        <div className="glass-block" style={{ textAlign: 'center', padding: 'var(--space-3xl)', margin: 'var(--space-md) 0' }}>
+        <div className="dashboard-panel-card" style={{ textAlign: 'center', padding: 'var(--space-3xl)', margin: 'var(--space-md) 0' }}>
           <div style={{ fontSize: 64, marginBottom: 16 }}>📦</div>
           <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--gray-900)' }}>Henüz bu kategoride ürün yok</div>
         </div>
       )}
 
-      <div className="glass-block" style={{ background: '#fff', padding: 'var(--space-xs)' }}>
+      <div className="dashboard-panel-card" style={{ padding: 'var(--space-md)' }}>
         {products.map((p, idx) => (
-          <div key={p.id} className="glass-list-item" style={{
+          <div key={p.id} className="dashboard-inner-card" style={{
             display: 'flex', alignItems: 'center', padding: '12px', gap: 'var(--space-md)',
-            border: 'none', borderBottom: idx < products.length - 1 ? '1px solid var(--gray-100)' : 'none',
-            borderRadius: 0, margin: 0, background: 'transparent', boxShadow: 'none'
+            border: '1px solid #E5E7EB', margin: 0, marginBottom: 'var(--space-sm)', background: '#FFF'
           }}>
             <img src={p.imageUrl || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><rect fill="%23f3f4f6" width="80" height="80"/></svg>'}
               alt={p.name} style={{ width: 56, height: 56, borderRadius: 'var(--radius-md)', objectFit: 'cover', flexShrink: 0 }} />

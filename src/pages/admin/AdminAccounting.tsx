@@ -89,8 +89,8 @@ export default function AdminAccounting() {
       </div>
 
       {/* Partners */}
-      <div className="glass-block" style={{ padding: 'var(--space-lg)', marginBottom: 'var(--space-md)', background: '#fff' }}>
-        <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 'var(--space-md)' }}>👥 Ortaklar</div>
+      <div className="dashboard-panel-card" style={{ padding: 'var(--space-xl)', marginBottom: 'var(--space-md)', background: '#fff' }}>
+        <div className="dashboard-inner-header" style={{ marginBottom: 'var(--space-md)' }}>ORTAKLAR SİSTEMİ</div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-md)' }}>
           {/* Ortak 1 */}
           <div style={{ padding: 'var(--space-md)', background: 'var(--nas-rose-light)', borderRadius: 'var(--radius-xl)' }}>
@@ -141,8 +141,8 @@ export default function AdminAccounting() {
       </div>
 
       {/* Order cost table */}
-      <div className="glass-block" style={{ padding: 'var(--space-lg)', background: '#fff' }}>
-        <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 'var(--space-md)' }}>📋 Sipariş Listesi</div>
+      <div className="dashboard-panel-card" style={{ padding: 'var(--space-xl)', background: '#fff' }}>
+        <div className="dashboard-inner-header" style={{ marginBottom: 'var(--space-md)' }}>SİPARİŞ MALİYET DETAYLARI</div>
         {periodOrders.length === 0 ? (
           <div style={{ textAlign: 'center', color: 'var(--gray-400)', padding: 'var(--space-xl)', fontSize: 14 }}>Bu dönemde sipariş yok</div>
         ) : (

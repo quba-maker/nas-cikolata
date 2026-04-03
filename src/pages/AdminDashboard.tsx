@@ -18,17 +18,15 @@ function PinGate({ onAuth }: { onAuth: () => void }) {
   };
 
   return (
-    <div className="mobile-wrapper" style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, var(--nas-bordeaux-3), var(--nas-bordeaux))',
+    <div className="mobile-wrapper dashboard-bg" style={{
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
       padding: 'var(--space-xl)',
     }}>
       <div style={{ fontSize: 64, marginBottom: 24, animation: 'slideUp 0.5s ease' }}>🔐</div>
-      <h1 style={{ fontSize: 28, fontWeight: 900, color: '#fff', letterSpacing: '-0.03em', marginBottom: 8, animation: 'slideUp 0.6s ease' }}>Admin Paneli</h1>
-      <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.65)', marginBottom: 40, animation: 'slideUp 0.7s ease' }}>Sisteme Giriş Yapın</p>
+      <h1 style={{ fontSize: 28, fontWeight: 900, color: 'var(--nas-black)', letterSpacing: '-0.03em', marginBottom: 8, animation: 'slideUp 0.6s ease' }}>Admin Paneli</h1>
+      <p style={{ fontSize: 15, color: 'var(--gray-500)', marginBottom: 40, animation: 'slideUp 0.7s ease' }}>Sisteme Giriş Yapın</p>
       
-      <div className="glass-block" style={{ width: '100%', maxWidth: 360, padding: 'var(--space-xl)', animation: 'scaleIn 0.5s ease' }}>
+      <div className="dashboard-panel-card" style={{ width: '100%', maxWidth: 360, padding: 'var(--space-xl)', animation: 'scaleIn 0.5s ease' }}>
         <div className="input-group">
           <label className="input-label" style={{ color: 'var(--gray-700)' }}>Admin PIN</label>
           <input
@@ -62,7 +60,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="mobile-wrapper" style={{ minHeight: '100vh', background: 'var(--nas-cream)', paddingBottom: 'var(--bottom-nav-h)' }}>
+    <div className="mobile-wrapper dashboard-bg" style={{ paddingBottom: 'var(--bottom-nav-h)' }}>
       <Routes>
         <Route path="/" element={<AdminHome />} />
         <Route path="/siparisler/*" element={<AdminOrders />} />
