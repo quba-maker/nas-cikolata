@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useApp } from '../../store/AppContext';
+import { compressImage } from '../../utils/helpers';
 import type { LandingSettings } from '../../types';
 
 export default function AdminLandingSettings() {
@@ -36,18 +37,12 @@ export default function AdminLandingSettings() {
     setLocal(p => ({ ...p, [key]: e.target.value }));
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, callback: (url: string) => void) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, callback: (url: string) => void) => {
     const file = e.target.files?.[0];
     if (!file) return;
     
-    // Check if the file is too large (e.g. > 5MB) for localStorage sanity, though we will just let it pass for now
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      if (ev.target?.result) {
-        callback(ev.target.result as string);
-      }
-    };
-    reader.readAsDataURL(file);
+    const compressedUrl = await compressImage(file);
+    callback(compressedUrl);
     e.target.value = ''; // reset input
   };
 
@@ -153,21 +148,18 @@ export default function AdminLandingSettings() {
                 <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 8 }}>
                    <label className="btn btn-sm" style={{ background: 'var(--gray-100)', color: 'var(--gray-900)', cursor: 'pointer' }}>
                       Cihazdan Seç
-                      <input type="file" accept="image/*" multiple onChange={e => {
+                      <input type="file" accept="image/*" multiple onChange={async e => {
                         const files = e.target.files;
                         if (!files) return;
-                        Array.from(files).forEach(file => {
-                           const reader = new FileReader();
-                           reader.onload = ev => {
-                             if (ev.target?.result) {
-                               const up = [...local.featuredCollections];
-                               up[index].images.push(ev.target.result as string);
-                               setLocal({ ...local, featuredCollections: up });
-                               save({ featuredCollections: up });
-                             }
-                           };
-                           reader.readAsDataURL(file);
-                        });
+                        
+                        const newUrls = await Promise.all(
+                          Array.from(files).map(file => compressImage(file))
+                        );
+                        
+                        const up = [...local.featuredCollections];
+                        up[index].images.push(...newUrls);
+                        setLocal({ ...local, featuredCollections: up });
+                        save({ featuredCollections: up });
                         e.target.value = '';
                       }} style={{ display: 'none' }} />
                    </label>
@@ -291,22 +283,19 @@ export default function AdminLandingSettings() {
                   <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 8 }}>
                      <label className="btn btn-sm" style={{ background: 'var(--gray-100)', color: 'var(--gray-900)', cursor: 'pointer' }}>
                         Cihazdan Görsel Yükle
-                        <input type="file" accept="image/*" multiple onChange={e => {
+                        <input type="file" accept="image/*" multiple onChange={async e => {
                           const files = e.target.files;
                           if (!files) return;
-                          Array.from(files).forEach(file => {
-                             const reader = new FileReader();
-                             reader.onload = ev => {
-                               if (ev.target?.result) {
-                                 const up = [...local.googleReviews];
-                                 if (!up[index].images) up[index].images = [];
-                                 up[index].images!.push(ev.target.result as string);
-                                 setLocal({ ...local, googleReviews: up });
-                                 save({ googleReviews: up });
-                               }
-                             };
-                             reader.readAsDataURL(file);
-                          });
+                          
+                          const newUrls = await Promise.all(
+                            Array.from(files).map(file => compressImage(file))
+                          );
+                          
+                          const up = [...local.googleReviews];
+                          if (!up[index].images) up[index].images = [];
+                          up[index].images!.push(...newUrls);
+                          setLocal({ ...local, googleReviews: up });
+                          save({ googleReviews: up });
                           e.target.value = '';
                         }} style={{ display: 'none' }} />
                      </label>

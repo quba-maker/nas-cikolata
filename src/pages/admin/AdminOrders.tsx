@@ -3,6 +3,7 @@ import { Routes, Route, useNavigate, useParams } from 'react-router-dom';
 import { useApp } from '../../store/AppContext';
 import type { Order, OrderStatus } from '../../types';
 import { formatCurrency, calcDeposit } from '../../data/seedData';
+import { compressImage } from '../../utils/helpers';
 import { formatDate, formatDateShort, daysUntil, STATUS_LABELS, STATUS_COLORS, STATUS_PROGRESS, getInitials } from '../../utils/helpers';
 import { openWhatsApp, fillTemplate } from '../../utils/whatsapp';
 
@@ -174,17 +175,17 @@ function OrderDetail() {
 
   const pleksiCount = [order.selectedBouquet ? 1 : 0, order.selectedBox ? 1 : 0, order.selectedSet ? 1 : 0].reduce((a, b) => a + b, 0);
 
-  const addPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const addPhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    Promise.all(files.map(f => new Promise<string>(res => {
-      const r = new FileReader();
-      r.onload = () => res(r.result as string);
-      r.readAsDataURL(f);
-    }))).then(imgs => {
-      const updated = [...productionPhotos, ...imgs];
-      setProductionPhotos(updated);
-      dispatch({ type: 'UPDATE_ORDER', id: order.id, updates: { productionPhotos: updated } });
-    });
+    if (files.length === 0) return;
+    
+    const imgs = await Promise.all(
+      files.map(f => compressImage(f))
+    );
+    
+    const updated = [...productionPhotos, ...imgs];
+    setProductionPhotos(updated);
+    dispatch({ type: 'UPDATE_ORDER', id: order.id, updates: { productionPhotos: updated } });
   };
 
   const STATUS_COLOR_MAP: Record<OrderStatus, string> = {

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useApp } from '../../store/AppContext';
+import { compressImage } from '../../utils/helpers';
 import type { IbanInfo, WhatsAppTemplate } from '../../types';
 
 const TEMPLATE_VARS = [
@@ -240,12 +241,11 @@ export default function AdminSettings() {
                   <label style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.4)', color: '#fff', fontSize: 12, fontWeight: 700, opacity: 0, transition: '0.2s', cursor: 'pointer' }}
                     className="hover-opacity-100">
                     Değiştir
-                    <input type="file" hidden accept="image/*" onChange={(e) => {
+                    <input type="file" hidden accept="image/*" onChange={async (e) => {
                       const file = e.target.files?.[0];
                       if (!file) return;
-                      const reader = new FileReader();
-                      reader.onload = () => save({ [key]: reader.result });
-                      reader.readAsDataURL(file);
+                      const compressed = await compressImage(file);
+                      save({ [key]: compressed });
                     }} />
                   </label>
                 </div>

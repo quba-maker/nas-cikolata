@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useApp } from '../../store/AppContext';
 import type { Product, ProductType, BadgeType } from '../../types';
+import { compressImage } from '../../utils/helpers';
 import { formatCurrency } from '../../data/seedData';
 import ProductCard from '../../components/ProductCard';
 
@@ -36,12 +37,11 @@ function ProductForm({
 
   const setField = (k: keyof Product, v: unknown) => setForm(p => ({ ...p, [k]: v }));
 
-  const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const r = new FileReader();
-    r.onload = () => setField('imageUrl', r.result as string);
-    r.readAsDataURL(file);
+    const url = await compressImage(file);
+    setField('imageUrl', url);
   };
 
   const cats = state.categories;
