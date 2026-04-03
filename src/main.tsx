@@ -11,4 +11,3 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </BrowserRouter>
   </React.StrictMode>,
 )
-import { injectTestData } from './testInject'; window.injectTestData = injectTestData;
