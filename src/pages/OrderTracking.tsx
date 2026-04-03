@@ -233,22 +233,29 @@ function TrackerView({ order }: { order: Order }) {
         </div>
       </div>
 
-      {/* KEYNOTE HORIZONTAL PROGRESS CAROUSEL */}
+      {/* HAUTE COUTURE PROGRESS TIMELINE */}
       <div style={{ marginTop: 24, position: 'relative', zIndex: 10 }}>
-        <div className="keynote-carousel">
+        <div className="couture-container">
+          
+          {/* Dynamic liquid gold line connecting the steps */}
+          {/* Top is 60px padding, each step is approx 110px. Let's calculate height based on currentIdx */}
+          <div 
+            className="couture-progress-line" 
+            style={{ height: `${currentIdx * 128}px` }} 
+          />
           
           {/* STEP 1: Onay */}
-          <div className={`keynote-card ${currentIdx === 0 ? 'active' : currentIdx > 0 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', block: 'center'})}>
-            <div className="keynote-card-icon">{currentIdx > 0 ? '✅' : '📨'}</div>
-            <div className="keynote-card-title">{currentIdx > 0 ? 'Onaylandı' : 'Onay Bekleniyor'}</div>
-            <div className="keynote-card-desc">Sipariş alındı. Detaylar inceleniyor, kısa süre içerisinde işleme alınacak.</div>
+          <div className={`couture-item ${currentIdx === 0 ? 'active' : currentIdx > 0 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', block: 'center'})}>
+            <div className="couture-icon-wrapper">{currentIdx > 0 ? '✓' : '1'}</div>
+            <div className="couture-title">{currentIdx > 0 ? 'Onaylandı' : 'Onay Bekleniyor'}</div>
+            <div className="couture-desc">Sipariş alındı. Detaylar inceleniyor, kısa süre içerisinde işleme alınacak.</div>
           </div>
 
           {/* STEP 2: Kapora */}
-          <div className={`keynote-card ${currentIdx === 1 ? 'active' : currentIdx > 1 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', block: 'center'})}>
-            <div className="keynote-card-icon">{currentIdx > 1 ? '💸' : '💎'}</div>
-            <div className="keynote-card-title">{currentIdx > 1 ? 'Kapora Alındı' : currentIdx === 1 ? 'Ödeme Bekleniyor' : 'Kapora'}</div>
-            <div className="keynote-card-desc">
+          <div className={`couture-item ${currentIdx === 1 ? 'active' : currentIdx > 1 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', block: 'center'})}>
+            <div className="couture-icon-wrapper">{currentIdx > 1 ? '✓' : '2'}</div>
+            <div className="couture-title">{currentIdx > 1 ? 'Kapora Alındı' : currentIdx === 1 ? 'Ödeme Bekleniyor' : 'Kapora'}</div>
+            <div className="couture-desc">
               {currentIdx > 1 
                 ? 'Ödemeniz başarıyla tarafımıza ulaştı.'
                 : 'Siparişin üretime girmesi için kapora işleminin tamamlanması gerekmektedir.'}
@@ -280,37 +287,41 @@ function TrackerView({ order }: { order: Order }) {
           </div>
 
           {/* STEP 3: Hazırlanıyor */}
-          <div className={`keynote-card ${currentIdx === 2 ? 'active' : currentIdx > 2 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', block: 'center'})}>
-            <div className="keynote-card-icon">{currentIdx > 2 ? '🎀' : '✨'}</div>
-            <div className="keynote-card-title">{currentIdx > 2 ? 'Hazırlandı' : 'Tasarım Sürecinde'}</div>
-            <div className="keynote-card-desc">Siparişiniz atölyemizde özenle hayat buluyor.</div>
-            {currentIdx === 2 && (
-              <div style={{ marginTop: 24 }}>
-                <PrepProgressBar eventDate={order.eventDate} />
-              </div>
-            )}
+          <div className={`couture-item ${currentIdx === 2 ? 'active' : currentIdx > 2 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', block: 'center'})}>
+            <div className="couture-icon-wrapper">{currentIdx > 2 ? '✓' : '3'}</div>
+            <div className="couture-title">{currentIdx > 2 ? 'Hazırlandı' : 'Tasarım Sürecinde'}</div>
+            <div className="couture-desc">
+              Siparişiniz atölyemizde özenle hayat buluyor.
+              {currentIdx === 2 && (
+                <div style={{ marginTop: 16 }}>
+                  <PrepProgressBar eventDate={order.eventDate} />
+                </div>
+              )}
+            </div>
           </div>
 
           {/* STEP 4: Hazır (Gizemli Kutulu) */}
-          <div className={`keynote-card ${currentIdx === 3 ? 'active' : currentIdx > 3 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', block: 'center'})}>
-            <div className="keynote-card-icon">{currentIdx > 3 ? '🎉' : '🎁'}</div>
-            <div className="keynote-card-title">{currentIdx > 3 ? 'Ayrıldı' : 'Teslime Hazır'}</div>
-            <div className="keynote-card-desc">Tüm hazırlıklar tamamlandı. Bu kusursuzluk sizi bekliyor.</div>
-            {currentIdx === 3 && (
-              <div style={{ marginTop: 24 }}>
-                <Confetti active />
-                {order.productionPhotos.map((img, i) => (
-                  <KeynoteRevealPhoto key={i} src={img} />
-                ))}
-              </div>
-            )}
+          <div className={`couture-item ${currentIdx === 3 ? 'active' : currentIdx > 3 ? 'done' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', block: 'center'})}>
+            <div className="couture-icon-wrapper">{currentIdx > 3 ? '✓' : '4'}</div>
+            <div className="couture-title">{currentIdx > 3 ? 'Ayrıldı' : 'Teslime Hazır'}</div>
+            <div className="couture-desc">
+              Tüm hazırlıklar tamamlandı. Bu kusursuzluk sizi bekliyor.
+              {currentIdx === 3 && (
+                <div style={{ marginTop: 16 }}>
+                  <Confetti active />
+                  {order.productionPhotos.map((img, i) => (
+                    <KeynoteRevealPhoto key={i} src={img} />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* STEP 5: Teslim (Bambaşka Son) */}
-          <div className={`keynote-card ${currentIdx === 4 ? 'active' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', block: 'center'})}>
-            <div className="keynote-card-icon">🥂</div>
-            <div className="keynote-card-title">Kusursuz Bir Son.</div>
-            <div className="keynote-card-desc">Siparişiniz başarıyla teslim edildi. En güzel anılarınızda yer almak bizim için bir lükstü.</div>
+          <div className={`couture-item ${currentIdx === 4 ? 'active' : ''}`} onClick={(e) => e.currentTarget.scrollIntoView({behavior: 'smooth', block: 'center'})}>
+            <div className="couture-icon-wrapper" style={{ borderColor: currentIdx === 4 ? '#22c55e' : '', color: currentIdx === 4 ? '#22c55e' : '' }}>5</div>
+            <div className="couture-title" style={{ color: currentIdx === 4 ? '#22c55e' : '' }}>Kusursuz Bir Son.</div>
+            <div className="couture-desc">Siparişiniz başarıyla teslim edildi. En güzel anılarınızda yer almak bizim için bir lükstü.</div>
             
             {currentIdx === 4 && (
               <div style={{ marginTop: 32, cursor: 'default' }} onClick={e => e.stopPropagation()}>

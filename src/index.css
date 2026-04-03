@@ -2661,70 +2661,129 @@ h1, h2, h3, h4, h5, h6, .modal-title, .title, .hero-title, .section-title {
   to { background-position: 200% center; }
 }
 
-/* Vertical Presentation Track */
-.keynote-carousel {
-  display: flex;
-  flex-direction: column;
-  padding: 24px var(--space-md) 64px;
-  gap: 24px;
+/* Haute Couture / Minimalist Luxury Timeline */
+.couture-container {
+  max-width: 500px;
+  margin: 0 auto;
   position: relative;
+  padding: 40px 0;
   z-index: 10;
 }
 
-.keynote-card {
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-  background: #FFF;
-  border: 1px solid rgba(0,0,0,0.05);
-  border-radius: 32px;
-  padding: 32px 24px;
+/* Glowing liquid gold vertical track */
+.couture-container::before {
+  content: '';
+  position: absolute;
+  top: 60px;
+  bottom: 0;
+  left: 24px;
+  width: 2px;
+  background: var(--gray-200);
+  z-index: 0;
+}
+.couture-progress-line {
+  position: absolute;
+  top: 60px;
+  left: 24px;
+  width: 2px;
+  background: linear-gradient(180deg, #F9D423 0%, #dab57f 50%, #b89150 100%);
+  z-index: 1;
+  transition: height 1s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 16px rgba(218, 181, 127, 0.6);
+}
+
+.couture-item {
   position: relative;
+  padding-left: 72px; /* icon spacing */
+  padding-bottom: 64px;
+  z-index: 2;
   transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 16px 32px rgba(0,0,0,0.03);
-  opacity: 0.5;
-  transform: scale(0.98);
 }
 
-.keynote-card.active {
-  transform: scale(1);
-  opacity: 1;
+.couture-icon-wrapper {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
   background: #FFF;
-  border-color: rgba(201, 169, 110, 0.4);
-  box-shadow: 0 24px 64px rgba(201, 169, 110, 0.15);
+  border: 2px solid var(--gray-300);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: var(--gray-300);
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.02);
 }
 
-.keynote-card.done {
+.couture-item.done .couture-icon-wrapper {
+  border-color: #dab57f;
+  background: #FFF;
+  color: #b89150;
+  box-shadow: 0 8px 16px rgba(218, 181, 127, 0.1);
+}
+
+.couture-item.active .couture-icon-wrapper {
+  background: linear-gradient(135deg, #FFF, #FAFAFA);
+  border-color: #dab57f;
+  color: #b89150;
+  transform: scale(1.1);
+  box-shadow: 0 8px 24px rgba(218, 181, 127, 0.25);
+}
+.couture-item.active .couture-icon-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid #dab57f;
+  opacity: 0;
+  animation: pulse-ring-gold 2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+@keyframes pulse-ring-gold {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+.couture-title {
+  font-size: 24px;   /* Huge typography */
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--gray-400); /* Hidden until active */
+  margin-bottom: 8px;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.couture-item.active .couture-title {
+  color: var(--nas-black);
+  transform: scale(1.02);
+  transform-origin: left;
+}
+.couture-item.done .couture-title {
+  color: var(--nas-black);
   opacity: 0.7;
 }
 
-.keynote-card-icon {
-  font-size: 40px;
-  margin-bottom: 24px;
-  display: inline-block;
-  filter: drop-shadow(0 8px 12px rgba(0,0,0,0.3));
+.couture-desc {
+  font-size: 14px;
+  color: var(--gray-400);
+  line-height: 1.6;
+  opacity: 0;
+  transform: translateY(8px);
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
-
-.keynote-card.active .keynote-card-icon {
-  animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-}
-
-.keynote-card-title {
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  margin-bottom: 8px;
-  color: var(--nas-black);
-}
-.keynote-card-desc {
-  font-size: 14.5px;
+.couture-item.active .couture-desc,
+.couture-item.done .couture-desc {
+  opacity: 1;
+  transform: translateY(0);
   color: var(--gray-500);
-  line-height: 1.5;
+  max-height: 500px; /* arbitrary large max height for expansion */
+}
+.couture-item.active .couture-desc {
+  color: var(--gray-600);
 }
 
 /* 3D Mysterious Reveal */
