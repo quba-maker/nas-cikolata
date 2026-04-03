@@ -181,7 +181,7 @@ export default function LandingPage() {
              </button>
              
              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 16, background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(10px)', border: '1px solid rgba(0,0,0,0.05)', fontSize: 14, fontWeight: 700, color: '#4A1525', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
-               <span>📍</span> Konya İçi Elden Teslimat İmkanı
+               <span>📍</span> Konya içi mağaza teslimi bulunmaktadır.
              </div>
           </div>
 
@@ -333,7 +333,7 @@ export default function LandingPage() {
              </button>
              
              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 16, background: 'rgba(74,21,37,0.05)', border: '1px solid rgba(74,21,37,0.1)', fontSize: 14, fontWeight: 700, color: '#4A1525' }}>
-               <span>📍</span> Konya İçi Elden Teslimat İmkanı
+               <span>📍</span> Konya içi mağaza teslimi bulunmaktadır.
              </div>
           </div>
         </div>
