@@ -57,10 +57,11 @@ function TrackingLogin({ onLogin, error }: { onLogin: (code: string, phone: stri
       padding: 'var(--space-xl)',
     }}>
       <div className="animate-fade-slide-up" style={{ textAlign: 'center', marginBottom: 40 }}>
-        <div style={{ position: 'relative', display: 'inline-flex', marginBottom: 24 }}>
-          <div style={{ position: 'absolute', inset: 0, background: 'var(--nas-gold)', filter: 'blur(30px)', opacity: 0.2, borderRadius: '50%' }} />
-          <div style={{ fontSize: 64, position: 'relative', zIndex: 1, filter: 'drop-shadow(0 12px 24px rgba(0,0,0,0.1))' }}>✨</div>
-        </div>
+        <img 
+           src="/logo.png" 
+           alt="Nas Çikolata" 
+           style={{ height: 48, margin: '0 auto 24px' }} 
+        />
         <h1 style={{ fontSize: 36, fontWeight: 900, color: 'var(--nas-black)', letterSpacing: '-0.04em', marginBottom: 8 }}>
           Sipariş Takibi
         </h1>
@@ -216,9 +217,9 @@ function TrackerView({ order }: { order: Order }) {
       {/* BRANDING HEADER */}
       <div style={{ padding: 'var(--space-2xl) var(--space-xl) 0', textAlign: 'center', position: 'relative', zIndex: 10 }}>
         <img 
-           src="https://nascikolata.com/wp-content/uploads/2025/01/nas-cikolata-logo-500.png" 
+           src="/logo.png" 
            alt="Nas Çikolata" 
-           style={{ height: 64, margin: '0 auto 32px' }} 
+           style={{ height: 48, margin: '0 auto 32px' }} 
         />
         
         <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--nas-black)' }}>
