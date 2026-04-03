@@ -1,167 +1,152 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../../store/AppContext';
-import type { OrderStatus } from '../../types';
-import { formatDateShort, daysUntil, STATUS_LABELS } from '../../utils/helpers';
-
-const STATUS_ORDER: OrderStatus[] = ['onay', 'kapora', 'hazirlaniyor', 'hazir', 'teslim'];
-const STATUS_COLORS: Record<OrderStatus, string> = {
-  onay: '#8E8E93',
-  kapora: '#FF9500',
-  hazirlaniyor: '#007AFF',
-  hazir: '#34C759',
-  teslim: '#8B5CF6',
-};
-
-function isSameDay(d1: Date, d2: Date) {
-  return d1.getDate() === d2.getDate() &&
-         d1.getMonth() === d2.getMonth() &&
-         d1.getFullYear() === d2.getFullYear();
-}
+import { formatDateShort, daysUntil } from '../../utils/helpers';
 
 export default function AdminHome() {
   const { state } = useApp();
   const navigate = useNavigate();
   const orders = state.orders;
 
-  const counts = STATUS_ORDER.reduce((acc, s) => {
-    acc[s] = orders.filter(o => o.status === s).length;
-    return acc;
-  }, {} as Record<OrderStatus, number>);
+  const counts = {
+    yeni: orders.filter(o => o.status === 'onay' || o.status === 'kapora').length,
+    yapimda: orders.filter(o => o.status === 'hazirlaniyor').length,
+    hazir: orders.filter(o => o.status === 'hazir').length,
+  };
 
-  const activeOrders = orders.filter(o => o.status !== 'teslim').length;
+  const activeOrders = counts.yeni + counts.yapimda + counts.hazir;
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'Günaydın' : hour < 18 ? 'İyi günler' : 'İyi akşamlar';
-
-  const recentOrders = [...orders].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 10);
   
   const urgentDeliveries = orders.filter(o => o.status !== 'teslim' && daysUntil(o.deliveryDate) <= 2)
     .sort((a, b) => new Date(a.deliveryDate).getTime() - new Date(b.deliveryDate).getTime());
 
-  // Siri Style Summary
-  const pending = counts['onay'] + counts['kapora'];
-  const p_text = pending > 0 ? `yeni onay bekleyen ${pending} siparişin` : `mutfakta devam eden ${counts['hazirlaniyor']} siparişin`;
-  const end_text = urgentDeliveries.length > 0 ? `Yarına yetiştirmen gereken ${urgentDeliveries.length} acil teslimat bulunuyor.` : `Tüm takvim rahat ilerliyor.`;
-  
-  const [activeTab, setActiveTab] = useState<'urgent' | 'recent'>(urgentDeliveries.length > 0 ? 'urgent' : 'recent');
-
-  // Mini Calendar Generation (Next 7 Days)
-  const today = new Date();
-  const miniCalendar = Array.from({length: 7}, (_, i) => {
-    const d = new Date(today);
-    d.setDate(today.getDate() + i);
-    // Find active orders for this date
-    const hasDelivery = orders.some(o => o.status !== 'teslim' && isSameDay(new Date(o.deliveryDate), d));
-    return {
-      date: d,
-      hasDelivery,
-      dayName: d.toLocaleDateString('tr-TR', { weekday: 'short' }),
-      dayNum: d.getDate()
-    };
-  });
+  const today = new Date().toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long' });
 
   return (
     <div style={{ padding: 'var(--space-md)', paddingBottom: '120px' }}>
       
-      {/* 1. Header & Pill Quick Actions */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 'var(--space-lg)' }}>
-        <div>
-          <h1 style={{ fontSize: 28, fontWeight: 900, color: '#1C1C1E', letterSpacing: '-0.04em' }}>
-            {greeting}
-          </h1>
-          <div style={{ fontSize: 13, fontWeight: 600, color: '#8E8E93', marginTop: 2 }}>
-            {new Date().toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long' })}
-          </div>
-        </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-           <button className="hover-scale" onClick={() => navigate('/siparis')} style={{ width: 44, height: 44, borderRadius: '50%', background: '#007AFF', color: '#FFF', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(0,122,255,0.3)', cursor: 'pointer' }}>
-             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-           </button>
-           <button className="hover-scale" onClick={() => navigate('/admin/yonetim')} style={{ width: 44, height: 44, borderRadius: '50%', background: '#F2F2F7', color: '#1C1C1E', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-           </button>
-        </div>
-      </div>
-
-      {/* 2. Siri Style Summary */}
-      <div style={{ marginBottom: 'var(--space-lg)', lineHeight: 1.5 }}>
-        <p style={{ fontSize: 20, fontWeight: 700, color: '#1C1C1E', letterSpacing: '-0.02em', margin: 0 }}>
-          Bugün aktif {activeOrders} siparişin var, {p_text} ve {counts['hazir']} iş çıkışa hazır. {end_text}
+      {/* 1. Karsilama - Welcome Header */}
+      <div style={{ marginBottom: 'var(--space-xl)' }}>
+        <h1 style={{ fontSize: 32, fontWeight: 900, color: '#1C1C1E', letterSpacing: '-0.04em', lineHeight: 1.1 }}>
+          {greeting}, Nas.
+        </h1>
+        <p style={{ fontSize: 16, fontWeight: 500, color: '#8E8E93', marginTop: 8, lineHeight: 1.5 }}>
+          {today}. Sistemde {activeOrders} siparişiniz aktif olarak yürütülüyor. Atölyeniz tıkırında işliyor.
         </p>
       </div>
 
-      {/* 3. Mini Calendar Ribbon */}
-      <div style={{ marginBottom: 'var(--space-xl)', display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 8, msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
-        {miniCalendar.map((day, ix) => (
-          <div key={ix} style={{ flexShrink: 0, width: 46, padding: '10px 0', borderRadius: 16, background: ix === 0 ? '#1C1C1E' : '#F2F2F7', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ fontSize: 10, fontWeight: 700, color: ix === 0 ? '#8E8E93' : '#8E8E93', textTransform: 'uppercase', marginBottom: 6 }}>{day.dayName}</span>
-            <span style={{ fontSize: 16, fontWeight: 800, color: ix === 0 ? '#FFF' : '#1C1C1E', marginBottom: 4 }}>{day.dayNum}</span>
-            <div style={{ width: 6, height: 6, borderRadius: '50%', background: day.hasDelivery ? '#FF3B30' : 'transparent' }} />
+      {/* 2. Pipeline Bar (Uretim Bandi) */}
+      <div style={{ marginBottom: 'var(--space-2xl)' }}>
+        <h2 style={{ fontSize: 13, fontWeight: 800, color: '#8E8E93', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 12 }}>Atölye Durumu</h2>
+        
+        <div style={{ background: '#FFF', borderRadius: 24, padding: '24px 20px', boxShadow: '0 4px 24px rgba(0,0,0,0.03)', display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {/* Progress Visual */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
+            {/* The Background Line */}
+            <div style={{ position: 'absolute', top: '24px', left: 20, right: 20, height: 2, background: '#F2F2F7', zIndex: 0 }} />
+            
+            <div style={{ zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, background: '#FFF', padding: '0 8px' }}>
+              <div style={{ width: 16, height: 16, borderRadius: '50%', background: counts.yeni > 0 ? '#FF9500' : '#E5E5EA', boxShadow: counts.yeni > 0 ? '0 0 0 4px rgba(255,149,0,0.15)' : 'none' }} />
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 4 }}>
+                <span style={{ fontSize: 24, fontWeight: 900, color: '#1C1C1E', lineHeight: 1 }}>{counts.yeni}</span>
+                <span style={{ fontSize: 10, fontWeight: 800, color: '#8E8E93', textTransform: 'uppercase', marginTop: 4 }}>Yeni</span>
+              </div>
+            </div>
+
+            <div style={{ zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, background: '#FFF', padding: '0 8px' }}>
+              <div style={{ width: 16, height: 16, borderRadius: '50%', background: counts.yapimda > 0 ? '#007AFF' : '#E5E5EA', boxShadow: counts.yapimda > 0 ? '0 0 0 4px rgba(0,122,255,0.15)' : 'none' }} />
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 4 }}>
+                <span style={{ fontSize: 24, fontWeight: 900, color: '#1C1C1E', lineHeight: 1 }}>{counts.yapimda}</span>
+                <span style={{ fontSize: 10, fontWeight: 800, color: '#8E8E93', textTransform: 'uppercase', marginTop: 4 }}>Yapımda</span>
+              </div>
+            </div>
+
+            <div style={{ zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, background: '#FFF', padding: '0 8px' }}>
+              <div style={{ width: 16, height: 16, borderRadius: '50%', background: counts.hazir > 0 ? '#34C759' : '#E5E5EA', boxShadow: counts.hazir > 0 ? '0 0 0 4px rgba(52,199,89,0.15)' : 'none' }} />
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 4 }}>
+                <span style={{ fontSize: 24, fontWeight: 900, color: '#1C1C1E', lineHeight: 1 }}>{counts.hazir}</span>
+                <span style={{ fontSize: 10, fontWeight: 800, color: '#8E8E93', textTransform: 'uppercase', marginTop: 4 }}>Hazır</span>
+              </div>
+            </div>
           </div>
-        ))}
+        </div>
       </div>
 
-      {/* 4. Tabbed Lists (Urgent vs Recent) */}
-      <div style={{ display: 'flex', gap: 16, marginBottom: 16, borderBottom: '1px solid #E5E5EA' }}>
-        <button 
-          onClick={() => setActiveTab('urgent')}
-          style={{ flex: 1, padding: '0 0 12px 0', background: 'none', border: 'none', borderBottom: activeTab === 'urgent' ? '2px solid #1C1C1E' : '2px solid transparent', fontSize: 13, fontWeight: 800, color: activeTab === 'urgent' ? '#1C1C1E' : '#8E8E93', letterSpacing: '0.02em', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
-        >
-          ACİLLER {urgentDeliveries.length > 0 && <span style={{ background: '#FF3B30', color: '#FFF', padding: '2px 6px', borderRadius: 10, fontSize: 10 }}>{urgentDeliveries.length}</span>}
-        </button>
-        <button 
-          onClick={() => setActiveTab('recent')}
-          style={{ flex: 1, padding: '0 0 12px 0', background: 'none', border: 'none', borderBottom: activeTab === 'recent' ? '2px solid #1C1C1E' : '2px solid transparent', fontSize: 13, fontWeight: 800, color: activeTab === 'recent' ? '#1C1C1E' : '#8E8E93', letterSpacing: '0.02em', cursor: 'pointer', transition: 'all 0.2s' }}
-        >
-          TÜM SİPARİŞLER
-        </button>
-      </div>
-
-      <div style={{ minHeight: 200 }}>
-        {activeTab === 'urgent' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {urgentDeliveries.length > 0 ? urgentDeliveries.map(o => (
-              <div key={o.id} className="hover-scale" onClick={() => navigate(`/admin/siparisler/${o.id}`)} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 14, background: 'rgba(255, 59, 48, 0.04)', borderRadius: 16, cursor: 'pointer', border: '1px solid rgba(255,59,48,0.1)' }}>
-                <div style={{ width: 44, height: 44, borderRadius: 14, background: 'rgba(255, 59, 48, 0.1)', color: '#FF3B30', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 14 }}>
-                  {o.bride.charAt(0)}{o.groom.charAt(0)}
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: '#343A40' }}>{o.bride} & {o.groom}</div>
-                  <div style={{ fontSize: 12, color: '#FF3B30', fontWeight: 600, marginTop: 2 }}>{daysUntil(o.deliveryDate) <= 0 ? 'Bugün Teslim Et' : `Yarın Teslim (${formatDateShort(o.deliveryDate)})`}</div>
-                </div>
-              </div>
-            )) : (
-              <div style={{ textAlign: 'center', padding: '40px 0', color: '#8E8E93', fontSize: 14, fontWeight: 600 }}>
-                Yaklaşan acil teslimat yok. 🎉
-              </div>
-            )}
-          </div>
-        )}
-
-        {activeTab === 'recent' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {recentOrders.length > 0 ? recentOrders.map(o => (
-              <div key={o.id} className="hover-scale" onClick={() => navigate(`/admin/siparisler/${o.id}`)} style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 14, cursor: 'pointer', background: 'transparent', transition: 'all 0.2s', padding: '6px 0' }}>
-                <div style={{ background: '#F2F2F7', width: 44, height: 44, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#8E8E93', fontSize: 13 }}>
-                  {o.bride.charAt(0)}{o.groom.charAt(0)}
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: '#1C1C1E', letterSpacing: '-0.01em' }}>{o.bride} & {o.groom}</div>
-                  <div style={{ fontSize: 12, color: '#8E8E93', fontWeight: 600 }}>{formatDateShort(o.createdAt)}</div>
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: 10, fontWeight: 800, color: STATUS_COLORS[o.status] || '#8E8E93', marginBottom: 2, textTransform: 'uppercase', padding: '4px 8px', background: `${STATUS_COLORS[o.status]}15`, borderRadius: 10 }}>
-                    {STATUS_LABELS[o.status]}
+      {/* 3. Urgent Action Center (Only displayed if needed) */}
+      {urgentDeliveries.length > 0 && (
+        <div style={{ marginBottom: 'var(--space-2xl)' }}>
+          <h2 style={{ fontSize: 13, fontWeight: 800, color: '#FF3B30', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#FF3B30', display: 'inline-block' }} /> Bugüne / Yarına Yetişecekler
+          </h2>
+          <div style={{ background: '#FFF1F2', borderRadius: 24, padding: 20, border: '1px solid rgba(255, 59, 48, 0.1)', boxShadow: '0 8px 32px rgba(255,59,48,0.06)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {urgentDeliveries.map(o => (
+                <div key={o.id} className="hover-scale" onClick={() => navigate(`/admin/siparisler/${o.id}`)} style={{ display: 'flex', alignItems: 'center', gap: 12, background: '#FFF', padding: 12, borderRadius: 16, cursor: 'pointer' }}>
+                  <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(255, 59, 48, 0.1)', color: '#FF3B30', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 14 }}>
+                    {o.bride.charAt(0)}{o.groom.charAt(0)}
                   </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: '#1C1C1E' }}>{o.bride} & {o.groom}</div>
+                    <div style={{ fontSize: 12, color: '#FF3B30', fontWeight: 600, marginTop: 2 }}>
+                      {daysUntil(o.deliveryDate) <= 0 ? 'Hemen Çıkış Yapılmalı' : `Yarın Çıkacak (${formatDateShort(o.deliveryDate)})`}
+                    </div>
+                  </div>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF3B30" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5 }}><polyline points="9 18 15 12 9 6"></polyline></svg>
                 </div>
-              </div>
-            )) : (
-              <div style={{ textAlign: 'center', padding: '40px 0', color: '#8E8E93', fontSize: 14, fontWeight: 600 }}>
-                Henüz hareket yok
-              </div>
-            )}
+              ))}
+            </div>
           </div>
-        )}
+        </div>
+      )}
+
+      {/* 4. Bento Action Grid */}
+      <div>
+        <h2 style={{ fontSize: 13, fontWeight: 800, color: '#8E8E93', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 12 }}>Yönetim Merkezi</h2>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          
+          {/* Primary Action - Creates a New Order */}
+          <button className="hover-scale" onClick={() => navigate('/siparis')} style={{ gridColumn: 'span 2', background: '#1C1C1E', borderRadius: 24, padding: 24, border: 'none', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}>
+            <div>
+              <div style={{ color: '#FFF', fontSize: 18, fontWeight: 800, marginBottom: 4 }}>Yeni Sipariş</div>
+              <div style={{ color: '#8E8E93', fontSize: 13, fontWeight: 500 }}>Sisteme yeni bir sipariş ekle</div>
+            </div>
+            <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFF' }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </div>
+          </button>
+
+          {/* Secondary Actions */}
+          <button className="hover-scale" onClick={() => navigate('/admin/yonetim/muhasebe')} style={{ background: '#FFF', borderRadius: 24, padding: 20, border: 'none', textAlign: 'left', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: 16, boxShadow: '0 4px 20px rgba(0,0,0,0.03)', height: 140 }}>
+            <div style={{ width: 44, height: 44, borderRadius: 16, background: 'rgba(255, 149, 0, 0.1)', color: '#FF9500', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+            </div>
+            <div>
+              <div style={{ fontSize: 15, fontWeight: 800, color: '#1C1C1E' }}>Finans</div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: '#8E8E93', marginTop: 2 }}>Gelir & Gider</div>
+            </div>
+          </button>
+
+          <button className="hover-scale" onClick={() => navigate('/admin/yonetim/urunler')} style={{ background: '#FFF', borderRadius: 24, padding: 20, border: 'none', textAlign: 'left', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: 16, boxShadow: '0 4px 20px rgba(0,0,0,0.03)', height: 140 }}>
+             <div style={{ width: 44, height: 44, borderRadius: 16, background: 'rgba(175, 82, 222, 0.1)', color: '#AF52DE', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+            </div>
+            <div>
+              <div style={{ fontSize: 15, fontWeight: 800, color: '#1C1C1E' }}>Ürünler</div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: '#8E8E93', marginTop: 2 }}>Ürün Kataloğu</div>
+            </div>
+          </button>
+          
+          <button className="hover-scale" onClick={() => navigate('/admin/yonetim/ayarlar')} style={{ gridColumn: 'span 2', background: '#FFF', borderRadius: 24, padding: 20, border: 'none', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 16, boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+            <div style={{ width: 44, height: 44, borderRadius: 16, background: '#F2F2F7', color: '#8E8E93', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            </div>
+            <div>
+              <div style={{ fontSize: 15, fontWeight: 800, color: '#1C1C1E' }}>Sistem Ayarları</div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: '#8E8E93', marginTop: 2 }}>Zamanlama, İletişim ve Diğer Ayarlar</div>
+            </div>
+          </button>
+        </div>
       </div>
 
     </div>
